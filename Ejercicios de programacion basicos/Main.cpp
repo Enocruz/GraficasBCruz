@@ -98,8 +98,43 @@ bool EsPrimo(int numero) {
 }
 
 int main() {
-	
+	//Problema 1
+	int p = PerimetroRectangulo(5, 3);
+	std::cout << "El valor de p es " << p;
+	std::cout << "\n";
+	//Problema 2
+	float a = AreaTriangulo(5.0f, 3.0f);
+	std::cout << "El valor de a es " << a;
+	std::cout << "\n";
+	//Problema 3
+	int mayor = Mayor(5, 9, 1);
+	std::cout << "El mayor es " << mayor;
+	std::cout << "\n";
+	//Problema 4
+	int menor = Menor(5, 9, 1);
+	std::cout << "El menor es " << menor;
+	std::cout << "\n";
+	//Problema 5
+	FilaEstrellas(5);
+	std::cout << "\n";
+	//Problema 6
+	MatrizEstrellas(4);
+	std::cout << "\n";
+	//Problema 7
+	PiramideEstrellas(6);
+	std::cout << "\n";
+	//Problema 8
 	FlechaEstrellas(3);
+	std::cout << "\n";
+	//Problema 9
+	Fibonacci(9);
+	std::cout << "\n";
+	//Problema 10
+	bool primo = EsPrimo(79);
+	primo == 1 ? std::cout << "True" : std::cout << "False";
+	std::cout << "\n";
+	primo = EsPrimo(52);
+	primo == 1 ? std::cout << "True" : std::cout << "False";
 	std::cin.get();
 	return 0;
 }
