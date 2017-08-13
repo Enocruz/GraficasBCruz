@@ -1,7 +1,13 @@
-//Brandon Alain Cruz Ruiz
-//A01375640
-//Tarea - Ejercicios de programación básicos.pdf
-
+/*************************************************
+/  Materia: Gráficas computacionales
+/
+/  Autor: Brandon Alain Cruz Ruiz  A01375640
+/
+/  Fecha: 14 de Agosto del 2017
+/
+/  Tarea: Ejercicios de programación básicos.pdf
+/
+/*************************************************/
 #include <iostream>
 
 void FilaEstrellas(int n) {
