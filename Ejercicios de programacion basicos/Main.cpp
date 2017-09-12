@@ -25,21 +25,44 @@
 GLuint vao;
 GLuint shaderProgram;
 
+
 void Initialize() {
 
+	double angulo = 18;
 	std::vector<glm::vec2> positions;
+	positions.push_back(glm::vec2(glm::cos(glm::radians(90.0f)), glm::sin(glm::radians(90.0f))));
+	for(double i = 0; i <= 4; i++) {
+		positions.push_back(glm::vec2(0.5*glm::cos(glm::radians(angulo)), 0.5 * glm::sin(glm::radians(angulo))));
+		positions.push_back(glm::vec2(glm::cos(glm::radians(angulo)), glm::sin(glm::radians(angulo))));
+		angulo -= 72;
+		if (angulo < 0) {
+			angulo += 360;
+		}
+	}
+	positions.push_back(glm::vec2(0.5*glm::cos(glm::radians(18.0f)),0.5*glm::sin(glm::radians(18.0f))));
+
+
+
+
+	
+
+	/*
 	positions.push_back(glm::vec2(0.0f, 0.0f));
 	for (double i = 0; i < 361; i++) {
 		positions.push_back(glm::vec2(glm::cos(glm::radians(i)),glm::sin(glm::radians(i))));
 	}
-	
+	*/
 
 	std::vector<glm::vec3> colors;
-	colors.push_back(glm::vec3(1, 1, 1));
+	for (double i = 0; i <= 11; i++) {
+		colors.push_back(glm::vec3(1.0f,0.0f,0.0f));
+	}
+	/*
+	colors.push_back(glm::vec3(1.0f, 1.0f, 1.0f));
 	for (double i = 0; i < 361; i++) {
 		colors.push_back(glm::vec3(glm::sin(glm::radians(i)), glm::cos(glm::radians(i)), i));
 	}
-
+	*/
 
 	//Generamos un manager
 	glGenVertexArrays(1, &vao);
@@ -83,7 +106,7 @@ void Initialize() {
 	InputFile ifile;
 
 	//VERTEX SHADER
-	ifile.Read("DiscardCenter.vert");
+	ifile.Read("Default.vert");
 	std::cout << ifile.GetContents();
 	std::string vertexSource = ifile.GetContents();
 	//Creamos un shader de tipo vertex shader
@@ -96,9 +119,9 @@ void Initialize() {
 	//Asumimos que no hay errores
 	glCompileShader(vertexShaderHandler);
 	
-
+	
 	InputFile ifile2;
-	ifile2.Read("DiscardCenter.frag");
+	ifile2.Read("Default.frag");
 	std::cout << ifile2.GetContents() << "\n";
 	std::string fragmentSource = ifile2.GetContents();
 	GLuint fragmentShaderHandler = glCreateShader(GL_FRAGMENT_SHADER);
@@ -119,6 +142,19 @@ void Initialize() {
 	glBindAttribLocation(shaderProgram, 1, "VertexColor");
 	//Ejecutamos el proceso de linker (aseguramos que el vertex y fragment son compatibles)
 	glLinkProgram(shaderProgram);
+
+	//Para configurar un uniform, tenemos que decirle a OpenGL, que vamos a utilizar el
+	//shader program (manager)
+
+	/*
+	glUseProgram(shaderProgram);
+	
+	GLint uniformLocation = glGetUniformLocation(shaderProgram, "Resolution");
+	
+	glUniform2f(uniformLocation, 400.0f, 400.0f);
+
+	glUseProgram(0);
+	*/
 	
 }
 
@@ -134,14 +170,37 @@ void GameLoop() {
 	//asociados automáticamente
 	glBindVertexArray(vao);
 	//Función de dibujado sin índices
-	glDrawArrays(GL_TRIANGLE_FAN, 0, 362);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 12);
 	//Terminamos de utilizar el manager
 	glBindVertexArray(0);
 	//Desactivamos el manager
 	glUseProgram(0);
-
+		
 	//Cuando terminamos de renderear, cambiamos los buffers
 	glutSwapBuffers();
+}
+
+void Idle() {
+	//Cuando OpenGL entra en modo reposo (para ahorrar bateria, por ejemplo)
+	//le decimos que vuelva a dibujar
+	//Vuelve a mandar a llamar GameLoop
+	glutPostRedisplay();
+}
+
+void ReshapeWindow(int width, int height) {
+	
+	glViewport(0, 0, width, height);
+	/*
+	//Para configurar un uniform, tenemos que decirle a OpenGL, que vamos a utilizar el
+	//shader program (manager)
+	glUseProgram(shaderProgram);
+
+	GLint uniformLocation = glGetUniformLocation(shaderProgram, "Resolution");
+
+	glUniform2f(uniformLocation, width, height);
+
+	glUseProgram(0);
+	*/
 }
 
 int main(int argc, char * argv[]) {
@@ -176,6 +235,13 @@ int main(int argc, char * argv[]) {
 	//frame
 	glutDisplayFunc(GameLoop);
 
+	//Asociamos una función para el cambio de resolución de la ventana. Freeglut 
+	//la manda a llamar cuando alguien cambie el tamaño de la ventana.
+	glutReshapeFunc(ReshapeWindow);
+
+	//Asociamos la función que se mandará a llamar cuando OpenGL entre en modo de reposo
+	glutIdleFunc(Idle);
+
 	//Inicializamos GLEW. Esta librería se encarga de obtener el API de OpenGl de nuestra
 	//tarjeta de video.
 	glewInit();
@@ -184,6 +250,14 @@ int main(int argc, char * argv[]) {
 	glClearColor(1.0f, 1.0f, 0.5f, 1.0f);
 
 	//std::cout << glGetString(GL_VERSION) << std::endl;
+
+	//Además de solicitar el buffer de profundidad, tenemos que decirle a OpenGL que lo queremos activo
+	glEnable(GL_DEPTH_TEST);
+	//Activamos el borrado de caras traseras
+	//Ahora todos los triangulos que dibujemos deben estar en CCW
+	glEnable(GL_CULL_FACE);
+	//No dibujar las caras traseras de la geometría
+	glCullFace(GL_BACK);
 
 	//Configuración inicial de nuestro programa
 	Initialize();
