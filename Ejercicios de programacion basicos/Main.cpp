@@ -20,17 +20,24 @@
 #include <glm/glm.hpp>
 #include <iostream>
 #include "InputFile.h"
+#include "Mesh.h"
+#include "Shader.h"
 
 
 GLuint vao;
 GLuint shaderProgram;
-
+Mesh mesh;
 
 void Initialize() {
 
+
+
+
 	double angulo = 18;
+
 	std::vector<glm::vec2> positions;
 	positions.push_back(glm::vec2(glm::cos(glm::radians(90.0f)), glm::sin(glm::radians(90.0f))));
+	
 	for(double i = 0; i <= 4; i++) {
 		positions.push_back(glm::vec2(0.5*glm::cos(glm::radians(angulo)), 0.5 * glm::sin(glm::radians(angulo))));
 		positions.push_back(glm::vec2(glm::cos(glm::radians(angulo)), glm::sin(glm::radians(angulo))));
@@ -39,10 +46,8 @@ void Initialize() {
 			angulo += 360;
 		}
 	}
+	
 	positions.push_back(glm::vec2(0.5*glm::cos(glm::radians(18.0f)),0.5*glm::sin(glm::radians(18.0f))));
-
-
-
 
 	
 
@@ -64,17 +69,23 @@ void Initialize() {
 	}
 	*/
 
+	
+	/*
+	
 	//Generamos un manager
 	glGenVertexArrays(1, &vao);
 	//Utilizar el vao. A partir de este momento, todos los VBOs creados y 
 	//configurados se van a asociar a este manager
 	glBindVertexArray(vao);
 
-
+	
 	//Identificador del VBO de posiciones
 	GLuint positionsVBO;
+
+
 	//Creación del VBO posiciones
 	glGenBuffers(1, &positionsVBO);
+
 	//Activamos el buffer de posiciones para poder utilizarlo
 	glBindBuffer(GL_ARRAY_BUFFER, positionsVBO);
 	//Creamos la memoria y la inicializamos con los datos del atributo de posiciones
@@ -85,11 +96,14 @@ void Initialize() {
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 	//Ya no se utiliza este VBO, así que lo removemos
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	
+	glBindVertexArray(0);
+	glBindVertexArray(vao);
 	//Identificador del VBO de colores
 	GLuint colorsVBO;
 	//Creación del VBO de colores
 	glGenBuffers(1, &colorsVBO);
+
+
 	//Activamos para poder utilizar
 	glBindBuffer(GL_ARRAY_BUFFER, colorsVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*colors.size(), colors.data(), GL_STATIC_DRAW);
@@ -97,12 +111,24 @@ void Initialize() {
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
+	glBindVertexArray(0);
+	*/
+	
+	mesh.CreateMesh(12);
+	mesh.SetPositionAttribute(positions, GL_STATIC_DRAW, 0);
+	mesh.SetColorAttribute(colors, GL_STATIC_DRAW, 1);
 
 	//Desactivamos el manager
-	glBindVertexArray(0);
+
 
 	//Creamos un objeto para leer archivos
 	
+	Shader vertexShader;
+	vertexShader.CreateShader("Default.vert", GL_VERTEX_SHADER);
+
+	Shader fragmentShader;
+	fragmentShader.CreateShader("Default.frag", GL_FRAGMENT_SHADER);
+	/*
 	InputFile ifile;
 
 	//VERTEX SHADER
@@ -120,6 +146,7 @@ void Initialize() {
 	glCompileShader(vertexShaderHandler);
 	
 	
+	
 	InputFile ifile2;
 	ifile2.Read("Default.frag");
 	std::cout << ifile2.GetContents() << "\n";
@@ -129,13 +156,14 @@ void Initialize() {
 	glShaderSource(fragmentShaderHandler, 1, &fragmentSource_c, nullptr);
 	glCompileShader(fragmentShaderHandler);
 
+	*/
 
 	//Creamos el identificador para el manager de los shaders
 	shaderProgram = glCreateProgram();
 	//Adjuntamos el vertex shader al manager
-	glAttachShader(shaderProgram, vertexShaderHandler);
+	glAttachShader(shaderProgram, vertexShader.GetHandle());
 	//Adjuntamos el fragment shader al manager
-	glAttachShader(shaderProgram, fragmentShaderHandler);
+	glAttachShader(shaderProgram, fragmentShader.GetHandle());
 	//Asociamos un buffer con índice 0 (posiciones) a la variable VertexPosition
 	glBindAttribLocation(shaderProgram, 0, "VertexPosition");
 	//Asociamos un buffer con índice 1 (Colores) a la variable VertexColor
@@ -166,6 +194,8 @@ void GameLoop() {
 
 	//Activamos el vertex shader y el fragment shader utilizando el manager
 	glUseProgram(shaderProgram);
+
+	/*
 	//Activamos el manager, en este momento se activan todos los VBO
 	//asociados automáticamente
 	glBindVertexArray(vao);
@@ -173,6 +203,11 @@ void GameLoop() {
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 12);
 	//Terminamos de utilizar el manager
 	glBindVertexArray(0);
+	*/
+	mesh.Draw(GL_TRIANGLE_STRIP);
+
+
+
 	//Desactivamos el manager
 	glUseProgram(0);
 		
