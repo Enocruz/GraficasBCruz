@@ -22,16 +22,15 @@
 #include "InputFile.h"
 #include "Mesh.h"
 #include "Shader.h"
+#include "ShaderProgram.h"
 
 
 GLuint vao;
 GLuint shaderProgram;
 Mesh mesh;
+ShaderProgram shProgram;
 
 void Initialize() {
-
-
-
 
 	double angulo = 18;
 
@@ -114,20 +113,17 @@ void Initialize() {
 	glBindVertexArray(0);
 	*/
 	
-	mesh.CreateMesh(12);
-	mesh.SetPositionAttribute(positions, GL_STATIC_DRAW, 0);
-	mesh.SetColorAttribute(colors, GL_STATIC_DRAW, 1);
-
 	//Desactivamos el manager
 
 
 	//Creamos un objeto para leer archivos
-	
+	/*
 	Shader vertexShader;
 	vertexShader.CreateShader("Default.vert", GL_VERTEX_SHADER);
 
 	Shader fragmentShader;
 	fragmentShader.CreateShader("Default.frag", GL_FRAGMENT_SHADER);
+	*/
 	/*
 	InputFile ifile;
 
@@ -157,7 +153,7 @@ void Initialize() {
 	glCompileShader(fragmentShaderHandler);
 
 	*/
-
+	/*
 	//Creamos el identificador para el manager de los shaders
 	shaderProgram = glCreateProgram();
 	//Adjuntamos el vertex shader al manager
@@ -170,7 +166,8 @@ void Initialize() {
 	glBindAttribLocation(shaderProgram, 1, "VertexColor");
 	//Ejecutamos el proceso de linker (aseguramos que el vertex y fragment son compatibles)
 	glLinkProgram(shaderProgram);
-
+	*/
+	
 	//Para configurar un uniform, tenemos que decirle a OpenGL, que vamos a utilizar el
 	//shader program (manager)
 
@@ -183,6 +180,17 @@ void Initialize() {
 
 	glUseProgram(0);
 	*/
+
+	mesh.CreateMesh(12);
+	mesh.SetPositionAttribute(positions, GL_STATIC_DRAW, 0);
+	mesh.SetColorAttribute(colors, GL_STATIC_DRAW, 1);
+
+	shProgram.CreateProgram();
+	shProgram.SetAttribute(0, "VertexPosition");
+	shProgram.SetAttribute(1, "VertexColor");
+	shProgram.AttachShader("Default.vert", GL_VERTEX_SHADER);
+	shProgram.AttachShader("Default.frag", GL_FRAGMENT_SHADER);
+	shProgram.LinkProgram();
 	
 }
 
@@ -193,8 +201,8 @@ void GameLoop() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Activamos el vertex shader y el fragment shader utilizando el manager
-	glUseProgram(shaderProgram);
-
+	//glUseProgram(shaderProgram);
+	
 	/*
 	//Activamos el manager, en este momento se activan todos los VBO
 	//asociados automáticamente
@@ -204,13 +212,13 @@ void GameLoop() {
 	//Terminamos de utilizar el manager
 	glBindVertexArray(0);
 	*/
-	mesh.Draw(GL_TRIANGLE_STRIP);
-
-
-
 	//Desactivamos el manager
-	glUseProgram(0);
-		
+	//glUseProgram(0);
+
+	shProgram.Activate();
+	mesh.Draw(GL_TRIANGLE_STRIP);
+	shProgram.Deactivate();
+
 	//Cuando terminamos de renderear, cambiamos los buffers
 	glutSwapBuffers();
 }

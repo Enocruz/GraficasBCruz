@@ -1,3 +1,5 @@
+/*Brandon Alain Cruz Ruiz A01375640*/
+
 #include "Shader.h"
 #include "InputFile.h"
 
@@ -9,6 +11,7 @@ Shader::Shader()
 
 Shader::~Shader()
 {
+	glDeleteShader(_shaderHandle);
 }
 
 void Shader::CreateShader(std::string path, GLenum type)

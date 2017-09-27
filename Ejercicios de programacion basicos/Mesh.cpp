@@ -1,3 +1,5 @@
+/*Brandon Alain Cruz Ruiz A01375640*/
+
 #include "Mesh.h"
 #include <iostream>
 
@@ -30,7 +32,9 @@ Mesh::Mesh() {
 }
 
 Mesh::~Mesh() {
-
+	glDeleteBuffers(1, &_positionsVertexBufferObject);
+	glDeleteBuffers(1, &_colorsVertexBufferObject);
+	glDeleteVertexArrays(1, &_vertexArrayObject);
 }
 
 void Mesh::CreateMesh(GLint vertexCount) {
