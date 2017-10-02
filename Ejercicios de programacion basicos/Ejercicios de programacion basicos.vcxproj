@@ -126,10 +126,12 @@
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Circle.h" />
     <ClInclude Include="Employee.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="InputFile.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Rectangle.h" />
