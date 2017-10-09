@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include <glm\gtc\matrix_transform.hpp>
 
 Camera::Camera()
 {
@@ -78,12 +79,17 @@ void Camera::Pitch(float degrees)
 
 void Camera::Rotate(float x, float y, float z, bool world)
 {
+	_transform.Rotate(x, y, z, world);
+	_viewMatrix = glm::inverse(_transform.GetModelMatrix());
 }
 
 void Camera::SetPerspective(float nearPlane, float farPlane, float fieldOfView, float aspectRatio)
 {
+	_projectionMatrix = glm::perspective(glm::radians(fieldOfView), aspectRatio, nearPlane, farPlane);
 }
 
 void Camera::SetOrthographic(float size, float aspectRatio)
 {
+	float xSize = aspectRatio * size;
+	_projectionMatrix = glm::ortho(-xSize, xSize, -size, size, -size, size);
 }

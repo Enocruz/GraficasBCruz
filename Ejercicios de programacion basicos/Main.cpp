@@ -22,12 +22,14 @@
 #include "Mesh.h"
 #include "ShaderProgram.h"
 #include "Transform.h"
+#include "Camera.h"
 
 
 
 Mesh mesh;
 ShaderProgram shProgram;
 Transform _transform;
+Camera _camera;
 
 void Initialize() {
 
@@ -64,6 +66,8 @@ void Initialize() {
 	shProgram.AttachShader("Default.vert", GL_VERTEX_SHADER);
 	shProgram.AttachShader("Default.frag", GL_FRAGMENT_SHADER);
 	shProgram.LinkProgram();
+
+	_transform.SetRotation(0.0f, 0.0f, 90.0f);
 	
 }
 
@@ -73,11 +77,11 @@ void GameLoop() {
 	//Siempre hacerlo al inicio del frame
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	_transform.Rotate(0.0f, 0.0f, 0.001f, true);
-	
+	_transform.Rotate(0.0f, 0.01f, 0.00f, false);
+	_camera.MoveForward(0.001f);
 
 	shProgram.Activate();
-	shProgram.SetUniformMatrix("modelMatrix", _transform.GetModelMatrix());
+	shProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection() * _transform.GetModelMatrix());
 	mesh.Draw(GL_TRIANGLE_STRIP);
 	shProgram.Deactivate();
 
