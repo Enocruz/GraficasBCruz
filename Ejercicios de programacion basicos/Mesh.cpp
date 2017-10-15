@@ -90,13 +90,14 @@ void Mesh::SetIndices(std::vector<unsigned int> indices, GLenum usage)
 	_indicesCount = indices.size();
 	if (_indicesCount == 0)
 		return;
+	
 	if (_indicesBufferObject != 0)
 		_indicesBufferObject = 0;
-	std::cout << _indicesCount;
+		
 	glBindVertexArray(_vertexArrayObject);
 	glGenBuffers(1, &_indicesBufferObject);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indicesBufferObject);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*_indicesCount, indices.data(), usage);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*_indicesCount , indices.data(), usage);
 	glBindVertexArray(0);
 }
 
