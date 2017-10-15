@@ -16,7 +16,6 @@ void Mesh::SetAttributeData(GLuint buffer, const GLsizeiptr size, const void * d
 	glBufferData(GL_ARRAY_BUFFER, size, data, usage);
 	//Activamos el atributo en la tarjeta de video
 	glEnableVertexAttribArray(locationIndex); //Posición
-	std::cout << locationIndex << std::endl;
 	//Configuraos los datos del atributo en la tarjeta de video
 	glVertexAttribPointer(locationIndex, components, GL_FLOAT, GL_FALSE, 0, nullptr);
 	//Ya no se utiliza este VBO, así que lo removemos
@@ -25,10 +24,12 @@ void Mesh::SetAttributeData(GLuint buffer, const GLsizeiptr size, const void * d
 }
 
 Mesh::Mesh() {
-	GLuint _vertexArrayObject = 0;
-	GLuint _positionsVertexBufferObject=0;
-	GLuint _colorsVertexBufferObject=0;
-	GLuint _vertexCount = 0;
+	_vertexArrayObject = 0;
+	_positionsVertexBufferObject=0;
+	_colorsVertexBufferObject=0;
+	_vertexCount = 0;
+	_indicesBufferObject = 0;
+	_indicesCount = 0;
 }
 
 Mesh::~Mesh() {
@@ -47,8 +48,13 @@ void Mesh::Draw(GLenum primitive) {
 	//Utilizar el vao. A partir de este momento, todos los VBOs creados y 
 	//configurados se van a asociar a este manager
 	glBindVertexArray(_vertexArrayObject);
-	//Función de dibujado sin índices
-	glDrawArrays(primitive, 0, _vertexCount);
+	if (_indicesCount > 0) {
+		//std::cout << "Hola";
+		glDrawElements(primitive, _indicesCount, GL_UNSIGNED_INT, nullptr);
+	}else{
+		//Función de dibujado sin índices
+		glDrawArrays(primitive, 0, _vertexCount);
+	}
 	//Terminamos de utilizar el manager
 	glBindVertexArray(0);
 }
@@ -77,5 +83,20 @@ void Mesh::SetColorAttribute(std::vector<glm::vec4> colors, GLenum usage, GLuint
 	if (colors.size() == 0 || colors.size() != _vertexCount)
 		return;
 	SetAttributeData(_colorsVertexBufferObject, sizeof(glm::vec4) * colors.size(), colors.data(), usage, locationIndex, 4);
+}
+
+void Mesh::SetIndices(std::vector<unsigned int> indices, GLenum usage)
+{
+	_indicesCount = indices.size();
+	if (_indicesCount == 0)
+		return;
+	if (_indicesBufferObject != 0)
+		_indicesBufferObject = 0;
+	std::cout << _indicesCount;
+	glBindVertexArray(_vertexArrayObject);
+	glGenBuffers(1, &_indicesBufferObject);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indicesBufferObject);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*_indicesCount, indices.data(), usage);
+	glBindVertexArray(0);
 }
 

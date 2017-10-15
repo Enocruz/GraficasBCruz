@@ -32,6 +32,77 @@ Transform _transform;
 Camera _camera;
 
 void Initialize() {
+	//Código para crear el cubo
+
+	//Solo se necesitan 8 vértices
+	std::vector<glm::vec3> positions;
+	positions.push_back(glm::vec3(3.0f, 0, 3.0f)); //Esquina inferior derecha delantera => 0
+	positions.push_back(glm::vec3(3.0f, 0, -3.0f));  //Esquina inferior derecha trasera => 1
+	positions.push_back(glm::vec3(-3.0f, 0, -3.0f)); //Esquina inferior izquierda trasera => 2
+	positions.push_back(glm::vec3(-3.0f, 0, 3.0f)); //Esquina inferior izquierda delantera => 3
+	positions.push_back(glm::vec3(3.0f, 6.0f, 3.0f)); //Esquina superior derecha delantera => 4
+	positions.push_back(glm::vec3(3.0f, 6.0f, -3.0f)); //Esquina superior derecha trasera => 5
+	positions.push_back(glm::vec3(-3.0f, 6.0f, -3.0f)); //Esquina superior izquierda trasera => 6
+	positions.push_back(glm::vec3(-3.0f, 6.0f, 3.0f)); //Esquina superior izquierda delantera => 7
+
+	//Solo se necesitan 6 colores
+	std::vector<glm::vec3> colors;
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	colors.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+	colors.push_back(glm::vec3(1.0f, 1.0f, 1.0f));
+
+
+	//Se crea el vector con los índices de las posiciones
+	std::vector<unsigned int> indices = { 
+		0, 1, 5, 0, 5, 4, //Cara 1
+		3, 0, 4, 3, 4, 7, //Cara 2
+		2, 3, 7, 2, 7, 6, //Cara 3
+		1, 2, 6, 1, 6, 5, //Cara 4
+		0, 3, 2, 0, 2, 1, //Cara 5
+		4, 6, 7, 4, 5, 6 //Cara 6
+	};
+
+	std::vector<unsigned int> indicesColores = {
+		1, 1, 1, 1, 1, 1,
+		2, 2, 2, 2, 2, 2,
+		3, 3, 3, 3, 3, 3,
+		4, 4, 4, 4, 4, 4,
+		5, 5, 5, 5, 5, 5,
+		6, 6, 6, 6, 6, 6
+	};
+	
+
+
+
+	mesh.CreateMesh(8);
+	mesh.SetPositionAttribute(positions, GL_STATIC_DRAW, 0);
+	mesh.SetIndices(indices, GL_STATIC_DRAW);
+	mesh.SetColorAttribute(colors, GL_STATIC_DRAW, 1);
+	//mesh.SetIndices(indicesColores, GL_STATIC_DRAW);
+
+	shProgram.CreateProgram();
+	shProgram.SetAttribute(0, "VertexPosition");
+	shProgram.SetAttribute(1, "VertexColor");
+	shProgram.AttachShader("Default.vert", GL_VERTEX_SHADER);
+	shProgram.AttachShader("Default.frag", GL_FRAGMENT_SHADER);
+	shProgram.LinkProgram();
+
+	//Se ajusta la cámara para que se vea todo el cubo
+	_camera.SetPosition(0.0f, 1.0f, 20.0f);
+
+
+
+
+
+
+
+
+	/*
+	********** PENTAGONO MOVIENDOSE Y CAMARA MOVIENDOSE **********
+
 
 	double angulo = 18;
 
@@ -47,7 +118,7 @@ void Initialize() {
 		}
 	}
 	
-	positions.push_back(glm::vec2(0.5*glm::cos(glm::radians(18.0f)),0.5*glm::sin(glm::radians(18.0f))));
+	positions.push_back(glm::vec2(f5*glm::cos(glm::radians(18.0f)),0.5*glm::sin(glm::radians(18.0f))));
 
 	
 
@@ -55,6 +126,7 @@ void Initialize() {
 	for (double i = 0; i <= 11; i++) {
 		colors.push_back(glm::vec3(1.0f,0.0f,0.0f));
 	}
+	
 	
 	mesh.CreateMesh(12);
 	mesh.SetPositionAttribute(positions, GL_STATIC_DRAW, 0);
@@ -68,7 +140,8 @@ void Initialize() {
 	shProgram.LinkProgram();
 
 	_transform.SetRotation(0.0f, 0.0f, 90.0f);
-	
+	//_camera.SetOrthographic(1.0f, 1.0f);
+	*/	
 }
 
 void GameLoop() {
@@ -77,12 +150,12 @@ void GameLoop() {
 	//Siempre hacerlo al inicio del frame
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	_transform.Rotate(0.0f, 0.01f, 0.00f, false);
-	_camera.MoveForward(0.001f);
+	_transform.Rotate(0.01f, 0.01f, 0.01f, false);
+	//_camera.MoveForward(0.001f);
 
 	shProgram.Activate();
 	shProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection() * _transform.GetModelMatrix());
-	mesh.Draw(GL_TRIANGLE_STRIP);
+	mesh.Draw(GL_TRIANGLES);
 	shProgram.Deactivate();
 
 	//Cuando terminamos de renderear, cambiamos los buffers
