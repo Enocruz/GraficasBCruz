@@ -94,5 +94,11 @@
     <None Include="DiscardCenter.frag">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="Phong.frag">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="Phong.vert">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -24,57 +24,150 @@
 #include "Transform.h"
 #include "Camera.h"
 
-
-
 Mesh mesh;
 ShaderProgram shProgram;
 Transform geometria, geometria2;
 Camera _camera;
 float escala = 0.5f;
 float radians = 0.0f, inc = 0.0001;
+glm::vec3 LightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+float t = 0.01f;
 
 void Initialize() {
+	//Creacin del atributo de posiciones de estos vertices. Lista de vec2.
+	//Claramente en CPU y RAM
 	std::vector<glm::vec3> positions;
+	//Cara derecha
+	positions.push_back(glm::vec3(3.0f, 0, 3.0f));  //Esquina inferior derecha trasera => 0
+	positions.push_back(glm::vec3(3.0f, 0, -3.0f)); //Esquina superior derecha trasera => 1
+	positions.push_back(glm::vec3(3.0f, 6.0f, -3.0f)); //Esquina superior derecha delantera => 2
+	positions.push_back(glm::vec3(3.0f, 6.0f, 3.0f)); //Esquina inferior derecha delantera => 3, conecta triangulo con 0 y 2
+	//Cara de enfrente
+	positions.push_back(glm::vec3(-3.0f, 0, 3.0f)); //Esquina inferior izquierda delantera => 4
+	positions.push_back(glm::vec3(3.0f, 0, 3.0f)); //Esquina inferior derecha delantera => 5
+	positions.push_back(glm::vec3(3.0f, 6.0f, 3.0f)); //Esquina superior derecha delantera => 6
+	positions.push_back(glm::vec3(-3.0f, 6.0f, 3.0f)); //Esquina superior izquierda delantera => 7, conecta triangulo con 4 y 6
+	//Cara izquierda
+	positions.push_back(glm::vec3(-3.0f, 0, -3.0f)); //Esquina inferior izquierda trasera => 8
+	positions.push_back(glm::vec3(-3.0f, 0, 3.0f)); //Esquina inferior izquierda delantera => 9
+	positions.push_back(glm::vec3(-3.0f, 6.0f, 3.0f)); //Esquina superior izquierda delantera => 10
+	positions.push_back(glm::vec3(-3.0f, 6.0f, -3.0f)); //Esquina superior izquierda trasera => 11, conecta triangulo con 8 y 10
+	//Cara de atras
+	positions.push_back(glm::vec3(3.0f, 0, -3.0f));  //Esquina inferior derecha trasera => 12
+	positions.push_back(glm::vec3(-3.0f, 0, -3.0f)); //Esquina inferior izquierda trasera => 13
+	positions.push_back(glm::vec3(-3.0f, 6.0f, -3.0f)); //Esquina superior izquierda trasera => 14
+	positions.push_back(glm::vec3(3.0f, 6.0f, -3.0f)); //Esquina superior derecha trasera => 15,conecta triangilo con 12 y 14
+	//Cara de abajo
+	positions.push_back(glm::vec3(3.0f, 0, 3.0f)); //Esquina inferior derecha delantera => 16
+	positions.push_back(glm::vec3(-3.0f, 0, 3.0f)); //Esquina inferior izquierda delantera => 17
+	positions.push_back(glm::vec3(-3.0f, 0, -3.0f)); //Esquina inferior izquierda trasera => 18
+	positions.push_back(glm::vec3(3.0f, 0, -3.0f));  //Esquina inferior derecha trasera => 19, conecta trangulo con 16 y 18
+	//Cara de arriba
+	positions.push_back(glm::vec3(3.0f, 6.0f, 3.0f)); //Esquina superior derecha delantera => 20
+	positions.push_back(glm::vec3(-3.0f, 6.0f, -3.0f)); //Esquina superior izquierda trasera => 21
+	positions.push_back(glm::vec3(-3.0f, 6.0f, 3.0f)); //Esquina superior izquierda delantera => 22
+	positions.push_back(glm::vec3(3.0f, 6.0f, -3.0f)); //Esquina superior derecha trasera => 23,conecta triangulo con 20 y 22
+
+
 	std::vector<glm::vec3> colors;
+	//Color cara 1
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	//Color cara 2
+	colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	//Color cara 3
+	colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	//Color cara 4
+	colors.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+	//Color cara 5
+	colors.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+	//Color cara 6
+	colors.push_back(glm::vec3(1.0f, 1.0f, 1.0f));
+	colors.push_back(glm::vec3(1.0f, 1.0f, 1.0f));
+	colors.push_back(glm::vec3(1.0f, 1.0f, 1.0f));
+	colors.push_back(glm::vec3(1.0f, 1.0f, 1.0f));
 
-	positions.push_back(glm::vec3(1.0f, -1.0f, 1.0f));
-	positions.push_back(glm::vec3(1.0f, -1.0f, -1.0f));
-	positions.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));
-	positions.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));
-	positions.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
 
+	std::vector<glm::vec3> normals;
+	//Normales cara derecha
+	normals.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	normals.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	normals.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	normals.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	//Cara de enfrente 
+	normals.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	normals.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	normals.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	normals.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	//Cara izquierda
+	normals.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	normals.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	normals.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	normals.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	//Cara de atrás
+	normals.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
+	normals.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
+	normals.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
+	normals.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
+	//Cara de abajo
+	normals.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
+	normals.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
+	normals.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
+	normals.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
+	//Cara de arriba
+	normals.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	normals.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	normals.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	normals.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+
+	//Se crea el vector con los ndices de las posiciones
 	std::vector<unsigned int> indices = {
-		0,4,1,
-		1,4,2,
-		2,4,3,
-		3,4,0,
-		0,1,2,
-		0,2,3
+		0, 1, 2, 0, 2, 3, //Cara 1
+		4, 5, 6, 4, 6, 7, //Cara 2
+		8, 9, 10, 8, 10, 11, //Cara 3
+		12, 13, 14, 12, 14, 15, //Cara 4
+		16, 17, 18, 16, 18, 19, //Cara 5
+		20, 21, 22, 20, 23, 21 //Cara 6
 	};
 
-	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-	colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
-	colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-	colors.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
-	colors.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
 
 	mesh.CreateMesh(positions.size());
 	mesh.SetPositionAttribute(positions, GL_STATIC_DRAW, 0);
 	mesh.SetColorAttribute(colors, GL_STATIC_DRAW, 1);
+	mesh.SetNormalAttibute(normals, GL_STATIC_DRAW, 2);
 	mesh.SetIndices(indices, GL_STATIC_DRAW);
 	shProgram.CreateProgram();
 	shProgram.SetAttribute(0, "VertexPosition");
 	shProgram.SetAttribute(1, "VertexColor");
-	shProgram.AttachShader("Default.vert", GL_VERTEX_SHADER);
-	shProgram.AttachShader("Default.frag", GL_FRAGMENT_SHADER);
+	shProgram.SetAttribute(2, "VertexNormal");
+	shProgram.AttachShader("Phong.vert", GL_VERTEX_SHADER);
+	shProgram.AttachShader("Phong.frag", GL_FRAGMENT_SHADER);
 	shProgram.LinkProgram();
 
-	geometria.SetScale(3.0f, 3.0f, 3.0f);
-	geometria.SetPosition(0.0f, 1.0f, 0.0f);
-	
-	geometria2.SetScale(0.5f,0.5f, 0.5f);
-	_camera.SetPosition(0.0f, 0.0f, 25.0f);
+	//Se ajusta la cmara para que se vea todo el cubo
+	_camera.SetPosition(0.0f, 15.0f, 35.0f);
+	_camera.Rotate(-30.0f, 0.0f, 0.0f,false);
+	geometria2.SetScale(15.0f, 15.0f, 15.0f);
+	geometria2.SetPosition(0.0f, -100.0f, 0.0f);
 
+
+	shProgram.Activate();
+
+	shProgram.Deactivate();
 }
 
 void GameLoop() {
@@ -82,29 +175,28 @@ void GameLoop() {
 	//Limpiamos el buffer de color y el buffer de profundidad
 	//Siempre hacerlo al inicio del frame
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	geometria.Rotate(0.004f, 0.004f, 0.004f,false);
-	geometria.SetPosition(5.0f*glm::cos(glm::radians(radians)), 5.0f*glm::sin(glm::radians(radians)), 0.0f);
-	radians += 0.005f;
-
-	if (escala >= 1.0f)
-		inc *= -1;
-	else if (escala <= 0.25f)
-		inc *= -1;
-	escala += inc;
-	geometria2.SetScale(escala, escala, escala);
-	geometria2.Rotate(-0.004f, -0.004f, -0.004f, false);
+	//Gira en 3D
+	//std::cout << geometria.GetPosition().x + geometria.GetPosition().y + geometria.GetPosition().z;
+	geometria.Rotate(0.01, 0.01, 0.01,false);
 
 	shProgram.Activate();
-
+	
 	shProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection() * geometria.GetModelMatrix());
+	shProgram.SetUniformf("LightColor",LightColor.x, LightColor.y, LightColor.z);
+	shProgram.SetUniformf("LightPosition", 0.0f, 1.0f, 10.0f);
+	shProgram.SetUniformf("CameraPosition", _camera.GetPosition().x, _camera.GetPosition().y, _camera.GetPosition().z);
+	shProgram.SetUniformMatrix("modelMatrix", geometria.GetModelMatrix());
 	mesh.Draw(GL_TRIANGLES);
 
 	shProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection() * geometria2.GetModelMatrix());
+	//shProgram.SetUniformf("LightColor", LightColor.x, LightColor.y, LightColor.z);
+	//shProgram.SetUniformf("LightPosition", 0.0f, 10.0f, 7.0f);
+	//shProgram.SetUniformf("CameraPosition", _camera.GetPosition().x, _camera.GetPosition().y, _camera.GetPosition().z);
+	shProgram.SetUniformMatrix("modelMatrix", geometria2.GetModelMatrix());
 	mesh.Draw(GL_TRIANGLES);
 
 	shProgram.Deactivate();
-
+	
 	//Cuando terminamos de renderear, cambiamos los buffers
 	glutSwapBuffers();
 }
@@ -119,17 +211,10 @@ void Idle() {
 void ReshapeWindow(int width, int height) {
 	
 	glViewport(0, 0, width, height);
-	/*
+	
 	//Para configurar un uniform, tenemos que decirle a OpenGL, que vamos a utilizar el
 	//shader program (manager)
-	glUseProgram(shaderProgram);
 
-	GLint uniformLocation = glGetUniformLocation(shaderProgram, "Resolution");
-
-	glUniform2f(uniformLocation, width, height);
-
-	glUseProgram(0);
-	*/
 }
 
 int main(int argc, char * argv[]) {
@@ -176,7 +261,7 @@ int main(int argc, char * argv[]) {
 	glewInit();
 
 	//Configurar OpenGL. Este es el color por default del buffer de color en el framebuffer.
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.8f, 0.8f, 0.5f, 1.0f);
 
 	//std::cout << glGetString(GL_VERSION) << std::endl;
 

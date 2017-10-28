@@ -1,6 +1,7 @@
 #include "Transform.h"
 
-Transform::Transform() {
+Transform::Transform()
+{
 	_position = glm::vec3(0.0f, 0.0f, 0.0f);
 	_rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
 	_scale = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -56,6 +57,7 @@ void Transform::MoveForward(float delta, bool world)
 		_position += WORLD_FORWARD_VECTOR * delta;
 	else
 		_position += _forward * delta;
+
 	UpdateModelMatrixPosition();
 }
 
@@ -65,6 +67,7 @@ void Transform::MoveUp(float delta, bool world)
 		_position += WORLD_UP_VECTOR * delta;
 	else
 		_position += _up * delta;
+
 	UpdateModelMatrixPosition();
 }
 
@@ -74,6 +77,7 @@ void Transform::MoveRight(float delta, bool world)
 		_position += WORLD_RIGHT_VECTOR * delta;
 	else
 		_position += _right * delta;
+
 	UpdateModelMatrixPosition();
 }
 
@@ -81,7 +85,8 @@ void Transform::Translate(float x, float y, float z, bool world)
 {
 	if (world)
 		_position += glm::vec3(x, y, z);
-	else {
+	else
+	{
 		_position += _forward * z;
 		_position += _up * y;
 		_position += _right * x;
@@ -92,6 +97,7 @@ void Transform::Translate(float x, float y, float z, bool world)
 void Transform::Rotate(float x, float y, float z, bool world)
 {
 	glm::quat newRotation = glm::quat(glm::radians(glm::vec3(x, y, z)));
+
 	if (world)
 		_rotation = newRotation * _rotation;
 	else
@@ -119,8 +125,7 @@ void Transform::UpdateModelMatrixRotationScale()
 void Transform::UpdateLocalVectors()
 {
 	glm::mat4 rotationMatrix = glm::mat4_cast(_rotation);
-	_forward = glm::vec3(rotationMatrix * glm::vec4(WORLD_FORWARD_VECTOR, 0.0F));
+	_forward = glm::vec3(rotationMatrix * glm::vec4(WORLD_FORWARD_VECTOR, 0.0f));
 	_up = glm::vec3(rotationMatrix * glm::vec4(WORLD_UP_VECTOR, 0.0f));
 	_right = glm::cross(_up, _forward);
 }
-
