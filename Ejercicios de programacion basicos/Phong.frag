@@ -26,7 +26,7 @@ void main(){
 
 	vec3 diffuse = dot(normalize(InterpolatedNormal),L) * normalize(LightColor);
 	
-	vec3 phong = (diffuse+ambient+diffuse) * InterpolatedColor;
+	vec3 phong = (diffuse+ambient+specular) * InterpolatedColor;
 
 	FragColor = vec4(phong, 1.0f);
 }
