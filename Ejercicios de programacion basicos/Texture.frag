@@ -30,7 +30,7 @@ void main(){
 	vec3 diffuse = dot(normalize(InterpolatedNormal),L) * normalize(LightColor);
 	
 	//vec3 phong = (specular+ambient+diffuse) * InterpolatedColor;
-
-	FragColor = texture2D(DiffuseTexture, InterpolatedTexCoord);
+	vec3 phong = (specular+ambient+diffuse);
+	FragColor = texture2D(DiffuseTexture,InterpolatedTexCoord);// * phong, 1.0f);
 	//FragColor = vec4(phong, 1.0f);
 }

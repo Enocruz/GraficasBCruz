@@ -34,9 +34,6 @@ void Texture2D::Bind()
 		ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT),
 		0, ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_TYPE),
 		ilGetData());
-	
-
-	
 }
 
 void Texture2D::Unbind()
