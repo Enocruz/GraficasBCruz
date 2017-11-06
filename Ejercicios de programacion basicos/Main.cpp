@@ -23,11 +23,14 @@
 #include "ShaderProgram.h"
 #include "Transform.h"
 #include "Camera.h"
+#include "Texture2D.h"
+#include <IL/il.h>
 
 Mesh mesh;
 ShaderProgram shProgram;
 Transform geometria, geometria2;
 Camera _camera;
+Texture2D myTexture;
 float escala = 0.5f;
 float radians = 0.0f, inc = 0.0001;
 glm::vec3 LightColor = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -134,6 +137,37 @@ void Initialize() {
 	normals.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
 	normals.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
 
+	std::vector<glm::vec2> textures;
+	textures.push_back(glm::vec2(0.0f, 0.0f));  
+	textures.push_back(glm::vec2(1.0f, 0.0f)); 
+	textures.push_back(glm::vec2(1.0f, 1.0f)); 
+	textures.push_back(glm::vec2(0.0f, 1.0f)); 
+
+	textures.push_back(glm::vec2(0.0f, 0.0f));
+	textures.push_back(glm::vec2(1.0f, 0.0f));
+	textures.push_back(glm::vec2(1.0f, 1.0f));
+	textures.push_back(glm::vec2(0.0f, 1.0f));
+
+	textures.push_back(glm::vec2(0.0f, 0.0f));
+	textures.push_back(glm::vec2(1.0f, 0.0f));
+	textures.push_back(glm::vec2(1.0f, 1.0f));
+	textures.push_back(glm::vec2(0.0f, 1.0f));
+
+	textures.push_back(glm::vec2(0.0f, 0.0f));
+	textures.push_back(glm::vec2(1.0f, 0.0f));
+	textures.push_back(glm::vec2(1.0f, 1.0f));
+	textures.push_back(glm::vec2(0.0f, 1.0f));
+
+	textures.push_back(glm::vec2(0.0f, 0.0f));
+	textures.push_back(glm::vec2(1.0f, 0.0f));
+	textures.push_back(glm::vec2(1.0f, 1.0f));
+	textures.push_back(glm::vec2(0.0f, 1.0f));
+
+	textures.push_back(glm::vec2(0.0f, 0.0f));
+	textures.push_back(glm::vec2(1.0f, 0.0f));
+	textures.push_back(glm::vec2(1.0f, 1.0f));
+	textures.push_back(glm::vec2(0.0f, 1.0f));
+
 	//Se crea el vector con los ndices de las posiciones
 	std::vector<unsigned int> indices = {
 		0, 1, 2, 0, 2, 3, //Cara 1
@@ -149,13 +183,16 @@ void Initialize() {
 	mesh.SetPositionAttribute(positions, GL_STATIC_DRAW, 0);
 	mesh.SetColorAttribute(colors, GL_STATIC_DRAW, 1);
 	mesh.SetNormalAttibute(normals, GL_STATIC_DRAW, 2);
+	mesh.SetTextureAttribute(textures, GL_STATIC_DRAW, 3);
 	mesh.SetIndices(indices, GL_STATIC_DRAW);
+
 	shProgram.CreateProgram();
 	shProgram.SetAttribute(0, "VertexPosition");
 	shProgram.SetAttribute(1, "VertexColor");
 	shProgram.SetAttribute(2, "VertexNormal");
-	shProgram.AttachShader("Phong.vert", GL_VERTEX_SHADER);
-	shProgram.AttachShader("Phong.frag", GL_FRAGMENT_SHADER);
+	shProgram.SetAttribute(3, "VertexTexCoord");
+	shProgram.AttachShader("Texture.vert", GL_VERTEX_SHADER);
+	shProgram.AttachShader("Texture.frag", GL_FRAGMENT_SHADER);
 	shProgram.LinkProgram();
 
 	//Se ajusta la cmara para que se vea todo el cubo
@@ -165,9 +202,6 @@ void Initialize() {
 	geometria2.SetPosition(0.0f, -100.0f, 0.0f);
 
 
-	shProgram.Activate();
-
-	shProgram.Deactivate();
 }
 
 void GameLoop() {
@@ -181,21 +215,35 @@ void GameLoop() {
 
 	shProgram.Activate();
 	
+	
 	shProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection() * geometria.GetModelMatrix());
 	shProgram.SetUniformf("LightColor",LightColor.x, LightColor.y, LightColor.z);
 	shProgram.SetUniformf("LightPosition", 0.0f, 1.0f, 10.0f);
 	shProgram.SetUniformf("CameraPosition", _camera.GetPosition().x, _camera.GetPosition().y, _camera.GetPosition().z);
+	myTexture.LoadTexture("kaka.jpg");
+	shProgram.SetUniformi("DiffuseTexture", 0);
 	shProgram.SetUniformMatrix("modelMatrix", geometria.GetModelMatrix());
+	glActiveTexture(GL_TEXTURE0);
+	myTexture.Bind();
 	mesh.Draw(GL_TRIANGLES);
-
-	shProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection() * geometria2.GetModelMatrix());
-	//shProgram.SetUniformf("LightColor", LightColor.x, LightColor.y, LightColor.z);
-	//shProgram.SetUniformf("LightPosition", 0.0f, 10.0f, 7.0f);
-	//shProgram.SetUniformf("CameraPosition", _camera.GetPosition().x, _camera.GetPosition().y, _camera.GetPosition().z);
-	shProgram.SetUniformMatrix("modelMatrix", geometria2.GetModelMatrix());
-	mesh.Draw(GL_TRIANGLES);
-
+	glActiveTexture(GL_TEXTURE0);
+	myTexture.Unbind();
 	shProgram.Deactivate();
+	/*
+	shProgram.Activate();
+	
+
+	shProgram.SetUniformi("DiffuseTexture", 0);
+	shProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection() * geometria2.GetModelMatrix());
+	shProgram.SetUniformMatrix("modelMatrix", geometria2.GetModelMatrix());
+	glActiveTexture(GL_TEXTURE0);
+	myTexture.Bind();
+	mesh.Draw(GL_TRIANGLES);
+	glActiveTexture(GL_TEXTURE0);
+	myTexture.Unbind();
+	shProgram.Deactivate();
+	*/
+	
 	
 	//Cuando terminamos de renderear, cambiamos los buffers
 	glutSwapBuffers();
@@ -222,6 +270,10 @@ int main(int argc, char * argv[]) {
 	//Inicializar freeglut.
 	//Freeglut se encarga de crear una ventana para dibujar.
 	glutInit(&argc, argv);
+
+	// Inicializar DevIL. Esto se debe hacer sólo una vez.
+	ilInit();
+	
 
 	//Solicitando una versión específica de OpenGL.
 	glutInitContextVersion(4, 4);
@@ -272,6 +324,14 @@ int main(int argc, char * argv[]) {
 	glEnable(GL_CULL_FACE);
 	//No dibujar las caras traseras de la geometría
 	glCullFace(GL_BACK);
+	// Cambiar el punto de origen de las texturas. Por default, DevIL
+	// pone un punto de origen en la esquina superior izquierda.
+	// Esto es compatible con el sistema operativo, pero no con el
+	// funcionamiento de OpenGL.
+	ilEnable(IL_ORIGIN_SET);
+	// Configurar el punto de origen de las texturas en la esquina
+	// inferior izquierda
+	ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
 
 	//Configuración inicial de nuestro programa
 	Initialize();

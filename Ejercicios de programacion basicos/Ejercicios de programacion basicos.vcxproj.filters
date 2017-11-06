@@ -48,6 +48,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Texture2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Circle.h">
@@ -77,6 +80,9 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Texture2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Prueba.txt" />
@@ -100,5 +106,16 @@
     <None Include="Phong.vert">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="Texture.frag">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="Texture.vert">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\..\..\Downloads\floor.jpg" />
+    <Image Include="..\..\..\..\..\..\Downloads\box.jpg" />
+    <Image Include="..\..\..\..\..\..\Downloads\kaka.jpg" />
   </ItemGroup>
 </Project>

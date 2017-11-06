@@ -17,6 +17,7 @@ private:
 	GLuint _indicesBufferObject;
 	GLuint _indicesCount;
 	GLuint _normalsVertexBufferObject;
+	GLuint _texturesVertexBufferObject;
 
 	void SetAttributeData(GLuint buffer, const GLsizeiptr size, const void* data, GLenum usage, GLuint locationIndex, const GLint components);
 
@@ -30,5 +31,6 @@ public:
 	void SetColorAttribute(std::vector<glm::vec3> colors, GLenum usage, GLuint locationIndex);
 	void SetColorAttribute(std::vector<glm::vec4> colors, GLenum usage, GLuint locationIndex);
 	void SetNormalAttibute(std::vector<glm::vec3> normals, GLenum usage, GLuint locationIndex);
+	void SetTextureAttribute(std::vector<glm::vec2> textureCoords, GLenum usage, GLuint locationIndex);
 	void SetIndices(std::vector<unsigned int> indices, GLenum usage);
 };

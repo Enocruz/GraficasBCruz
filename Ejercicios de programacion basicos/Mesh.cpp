@@ -31,11 +31,14 @@ Mesh::Mesh() {
 	_vertexCount = 0;
 	_indicesBufferObject = 0;
 	_indicesCount = 0;
+	_texturesVertexBufferObject = 0;
 }
 
 Mesh::~Mesh() {
 	glDeleteBuffers(1, &_positionsVertexBufferObject);
 	glDeleteBuffers(1, &_colorsVertexBufferObject);
+	glDeleteBuffers(1, &_normalsVertexBufferObject);
+	glDeleteBuffers(1, &_texturesVertexBufferObject);
 	glDeleteVertexArrays(1, &_vertexArrayObject);
 }
 
@@ -89,6 +92,12 @@ void Mesh::SetNormalAttibute(std::vector<glm::vec3> normals, GLenum usage, GLuin
 	if (normals.size() == 0 || normals.size() != _vertexCount)
 		return;
 	SetAttributeData(_normalsVertexBufferObject, sizeof(glm::vec3)* normals.size(), normals.data(),usage, locationIndex, 3);
+}
+
+void Mesh::SetTextureAttribute(std::vector<glm::vec2> textureCoords, GLenum usage, GLuint locationIndex) {
+	if (textureCoords.size() == 0 || textureCoords.size() != _vertexCount)
+		return;
+	SetAttributeData(_texturesVertexBufferObject, sizeof(glm::vec2)* textureCoords.size(), textureCoords.data(), usage, locationIndex, 2);
 }
 
 void Mesh::SetIndices(std::vector<unsigned int> indices, GLenum usage)
