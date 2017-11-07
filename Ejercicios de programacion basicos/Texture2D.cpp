@@ -8,6 +8,8 @@ Texture2D::Texture2D()
 
 Texture2D::~Texture2D()
 {
+	ilBindImage(0);
+
 	glDeleteTextures(1, &_textureId);
 }
 
@@ -17,13 +19,9 @@ void Texture2D::LoadTexture(std::string path)
 	ilGenImages(1, &imageID);
 	ilBindImage(imageID);
 	ilLoadImage(path.c_str());
-
-}
-
-void Texture2D::Bind()
-{
 	glGenTextures(1, &_textureId);
-	glBindTexture(GL_TEXTURE_2D, _textureId);
+
+	Bind();
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -34,10 +32,18 @@ void Texture2D::Bind()
 		ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT),
 		0, ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_TYPE),
 		ilGetData());
+
+	Unbind();
+	ilBindImage(0);
+	ilDeleteImages(1,&imageID);
+}
+
+void Texture2D::Bind()
+{
+	glBindTexture(GL_TEXTURE_2D, _textureId);
 }
 
 void Texture2D::Unbind()
 {
 	glBindTexture(GL_TEXTURE_2D, 0);
-	ilBindImage(0);
 }

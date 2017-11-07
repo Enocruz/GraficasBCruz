@@ -11,7 +11,8 @@ uniform vec3 LightColor;
 uniform vec3 LightPosition;
 uniform mat4 modelMatrix;
 uniform vec3 CameraPosition;
-uniform sampler2D DiffuseTexture;
+uniform sampler2D DiffuseTexture0;
+uniform sampler2D DiffuseTexturePuerco;
 
 void main()
 {
@@ -31,5 +32,5 @@ void main()
 	vec3 phong = (ambient + specular + diffuse);
 	//FragColor = vec4(phong,1.0f);
 
-	FragColor = texture2D(DiffuseTexture, InterpolatedTexCoord) * vec4(phong,1.0f);
+	FragColor = mix(texture2D(DiffuseTexturePuerco, InterpolatedTexCoord), texture2D(DiffuseTexture0, InterpolatedTexCoord),0.6f) * vec4(phong,1.0f);
 }

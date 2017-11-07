@@ -154,6 +154,8 @@
     <None Include="Phong.vert" />
     <None Include="Texture.frag" />
     <None Include="Texture.vert" />
+    <None Include="TexturePuerco.frag" />
+    <None Include="TexturePuerco.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\..\..\Downloads\box.jpg" />

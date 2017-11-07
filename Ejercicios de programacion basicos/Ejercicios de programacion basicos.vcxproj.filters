@@ -112,6 +112,12 @@
     <None Include="Texture.vert">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="TexturePuerco.frag">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="TexturePuerco.vert">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\..\..\Downloads\floor.jpg" />

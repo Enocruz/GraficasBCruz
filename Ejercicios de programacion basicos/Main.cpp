@@ -27,10 +27,10 @@
 #include <IL/il.h>
 
 Mesh mesh;
-ShaderProgram shProgram;
+ShaderProgram shProgram,shProgramPuerco;
 Transform geometria, geometria2;
 Camera _camera;
-Texture2D myTexture, myTexture2;
+Texture2D myTexture, myTexture2,myTexture3;
 float escala = 0.5f;
 float radians = 0.0f, inc = 0.0001;
 glm::vec3 LightColor = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -138,35 +138,35 @@ void Initialize() {
 	normals.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
 
 	std::vector<glm::vec2> textures;
-	textures.push_back(glm::vec2(0.0f, 0.0f));  
-	textures.push_back(glm::vec2(1.0f, 0.0f)); 
-	textures.push_back(glm::vec2(1.0f, 1.0f)); 
-	textures.push_back(glm::vec2(0.0f, 1.0f)); 
+	textures.push_back(glm::vec2(0.0f, 0.0f));
+	textures.push_back(glm::vec2(0.0f, 1.0f));
+	textures.push_back(glm::vec2(1.0f, 1.0f));
+	textures.push_back(glm::vec2(1.0f, 0.0f));
 
 	textures.push_back(glm::vec2(0.0f, 0.0f));
-	textures.push_back(glm::vec2(1.0f, 0.0f));
-	textures.push_back(glm::vec2(1.0f, 1.0f));
 	textures.push_back(glm::vec2(0.0f, 1.0f));
+	textures.push_back(glm::vec2(1.0f, 1.0f));
+	textures.push_back(glm::vec2(1.0f, 0.0f));
 
 	textures.push_back(glm::vec2(0.0f, 0.0f));
-	textures.push_back(glm::vec2(1.0f, 0.0f));
-	textures.push_back(glm::vec2(1.0f, 1.0f));
 	textures.push_back(glm::vec2(0.0f, 1.0f));
+	textures.push_back(glm::vec2(1.0f, 1.0f));
+	textures.push_back(glm::vec2(1.0f, 0.0f));
 
 	textures.push_back(glm::vec2(0.0f, 0.0f));
-	textures.push_back(glm::vec2(1.0f, 0.0f));
-	textures.push_back(glm::vec2(1.0f, 1.0f));
 	textures.push_back(glm::vec2(0.0f, 1.0f));
+	textures.push_back(glm::vec2(1.0f, 1.0f));
+	textures.push_back(glm::vec2(1.0f, 0.0f));
 
 	textures.push_back(glm::vec2(0.0f, 0.0f));
-	textures.push_back(glm::vec2(1.0f, 0.0f));
-	textures.push_back(glm::vec2(1.0f, 1.0f));
 	textures.push_back(glm::vec2(0.0f, 1.0f));
+	textures.push_back(glm::vec2(1.0f, 1.0f));
+	textures.push_back(glm::vec2(1.0f, 0.0f));
 
 	textures.push_back(glm::vec2(0.0f, 0.0f));
-	textures.push_back(glm::vec2(1.0f, 0.0f));
 	textures.push_back(glm::vec2(1.0f, 1.0f));
 	textures.push_back(glm::vec2(0.0f, 1.0f));
+	textures.push_back(glm::vec2(1.0f, 0.0f));
 
 	//Se crea el vector con los ndices de las posiciones
 	std::vector<unsigned int> indices = {
@@ -185,6 +185,24 @@ void Initialize() {
 	mesh.SetNormalAttibute(normals, GL_STATIC_DRAW, 2);
 	mesh.SetTextureAttribute(textures, GL_STATIC_DRAW, 3);
 	mesh.SetIndices(indices, GL_STATIC_DRAW);
+
+	//Textura Puerco
+	shProgramPuerco.CreateProgram();
+	shProgramPuerco.SetAttribute(0, "VertexPosition");
+	shProgramPuerco.SetAttribute(1, "VertexColor");
+	shProgramPuerco.SetAttribute(2, "VertexNormal");
+	shProgramPuerco.SetAttribute(3, "VertexTexCoord");
+	shProgramPuerco.AttachShader("TexturePuerco.vert", GL_VERTEX_SHADER);
+	shProgramPuerco.AttachShader("TexturePuerco.frag", GL_FRAGMENT_SHADER);
+	shProgramPuerco.LinkProgram();
+
+	shProgramPuerco.Activate();
+	shProgramPuerco.SetUniformf("LightColor", LightColor.x, LightColor.y, LightColor.z);
+	shProgramPuerco.SetUniformf("LightPosition", 0.0f, 1.0f, 10.0f);
+	shProgramPuerco.SetUniformi("DiffuseTexture0", 0);
+	shProgramPuerco.SetUniformi("DiffuseTexturePuerco", 1);
+	shProgramPuerco.Deactivate();
+
 	shProgram.CreateProgram();
 	shProgram.SetAttribute(0, "VertexPosition");
 	shProgram.SetAttribute(1, "VertexColor");
@@ -200,7 +218,17 @@ void Initialize() {
 	geometria2.SetScale(15.0f, 15.0f, 15.0f);
 	geometria2.SetPosition(0.0f, -100.0f, 0.0f);
 
+	myTexture.LoadTexture("box.jpg");
+	myTexture2.LoadTexture("floor.jpg");
+	myTexture3.LoadTexture("puerco.png");
 
+	//myTexture.LoadTexture("puerco.jpg");
+
+	shProgram.Activate();
+	shProgram.SetUniformf("LightColor", LightColor.x, LightColor.y, LightColor.z);
+	shProgram.SetUniformf("LightPosition", 0.0f, 1.0f, 10.0f);
+	shProgram.SetUniformi("DiffuseTexture", 0);
+	shProgram.Deactivate();
 }
 
 void GameLoop() {
@@ -210,27 +238,25 @@ void GameLoop() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//Gira en 3D
 	//std::cout << geometria.GetPosition().x + geometria.GetPosition().y + geometria.GetPosition().z;
-	geometria.Rotate(0.4f, 0.4f, 0.4f,false);
-
-	shProgram.Activate();
-	shProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection() * geometria.GetModelMatrix());
-	shProgram.SetUniformf("LightColor",LightColor.x, LightColor.y, LightColor.z);
-	shProgram.SetUniformf("LightPosition", 0.0f, 1.0f, 10.0f);
-	shProgram.SetUniformf("CameraPosition", _camera.GetPosition().x, _camera.GetPosition().y, _camera.GetPosition().z);
-	myTexture.LoadTexture("box.jpg");
-	shProgram.SetUniformi("DiffuseTexture", 0);
-	shProgram.SetUniformMatrix("modelMatrix", geometria.GetModelMatrix());
+	geometria.Rotate(0, 0.01f, 0,false);
+	
+	shProgramPuerco.Activate();
+	shProgramPuerco.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection() * geometria.GetModelMatrix());
+	shProgramPuerco.SetUniformf("CameraPosition", _camera.GetPosition().x, _camera.GetPosition().y, _camera.GetPosition().z);
+	shProgramPuerco.SetUniformMatrix("modelMatrix", geometria.GetModelMatrix());
+	
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Bind();
+	glActiveTexture(GL_TEXTURE1);
+	myTexture3.Bind();
 	mesh.Draw(GL_TRIANGLES);
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Unbind();
-	shProgram.Deactivate();
-	
-	
+	glActiveTexture(GL_TEXTURE1);
+	myTexture3.Unbind();
+	shProgramPuerco.Deactivate();
+
 	shProgram.Activate();
-	myTexture2.LoadTexture("floor.jpg");
-	shProgram.SetUniformi("DiffuseTexture", 0);
 	shProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection() * geometria2.GetModelMatrix());
 	shProgram.SetUniformMatrix("modelMatrix", geometria2.GetModelMatrix());
 	glActiveTexture(GL_TEXTURE0);
@@ -239,9 +265,6 @@ void GameLoop() {
 	glActiveTexture(GL_TEXTURE0);
 	myTexture2.Unbind();
 	shProgram.Deactivate();
-	
-	
-	
 	//Cuando terminamos de renderear, cambiamos los buffers
 	glutSwapBuffers();
 }
