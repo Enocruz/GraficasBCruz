@@ -123,16 +123,19 @@
     <ClCompile Include="Employee.cpp" />
     <ClCompile Include="InputFile.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MainPrueba.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="Dephtbuffer.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Circle.h" />
+    <ClInclude Include="Dephtbuffer.h" />
     <ClInclude Include="Employee.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Transform.h" />
@@ -148,10 +151,16 @@
   <ItemGroup>
     <None Include="Default.frag" />
     <None Include="Default.vert" />
+    <None Include="Depth.frag" />
+    <None Include="Depth.vert" />
     <None Include="DiscardCenter.frag" />
     <None Include="DiscardCenter.vert" />
     <None Include="Phong.frag" />
     <None Include="Phong.vert" />
+    <None Include="Shadow.frag" />
+    <None Include="Shadow.vert" />
+    <None Include="ShadowPuerco.frag" />
+    <None Include="ShadowPuerco.vert" />
     <None Include="Texture.frag" />
     <None Include="Texture.vert" />
     <None Include="TexturePuerco.frag" />

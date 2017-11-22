@@ -31,7 +31,7 @@ public:
 	void SetUniformi(std::string name, int value);
 	void SetUniformMatrix(std::string name, glm::mat3 matrix);
 	void SetUniformMatrix(std::string name, glm::mat4 matrix);
-
+	void SetUniformVector(std::string name, glm::vec3 vector);
 private:
 	void DeleteAndDetachShaders();
 	void DeleteProgram();

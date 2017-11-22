@@ -2,12 +2,9 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <iostream>
 
 class Dephtbuffer {
-private:
-	GLuint _framebuffer;
-	GLuint _depthmap;
-	GLsizei _resolution;
 public:
 	Dephtbuffer();
 	~Dephtbuffer();
@@ -16,4 +13,8 @@ public:
 	void Unbind();
 	void BindDepthMap();
 	void UnbindDepthMap();
+private:
+	GLuint _framebuffer;
+	GLuint _dephtmap;
+	GLsizei _resolution;
 };
