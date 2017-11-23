@@ -22,7 +22,7 @@ A01375640 Brandon Alain Cruz Ruiz
 #include "Texture2D.h"
 #include "Dephtbuffer.h"
 
-Mesh _mesh;
+Mesh _mesh, _meshDedos, _meshPulgar;
 ShaderProgram _shaderProgram;
 ShaderProgram _shaderPuerco;
 ShaderProgram _shaderDepth;
@@ -36,6 +36,7 @@ Transform _geometriaMedioArriba;
 Transform _geometriaMeniqueArriba;
 Transform _geometriaPulgar;
 Transform _geometriaPulgarArriba;
+Transform _geometriaInvisible;
 Camera _camara;
 Camera _camaraLuz;
 Texture2D myTexture;
@@ -198,6 +199,20 @@ void Initialize() {
 	_mesh.SetTextureAttribute(textures, GL_STATIC_DRAW, 3);
 	_mesh.SetIndices(indices, GL_STATIC_DRAW);
 
+	_meshDedos.CreateMesh(positions.size());
+	_meshDedos.SetPositionAttribute(positions, GL_STATIC_DRAW, 0);
+	_meshDedos.SetColorAttribute(colors, GL_STATIC_DRAW, 1);
+	_meshDedos.SetNormalAttibute(normales, GL_STATIC_DRAW, 2);
+	_meshDedos.SetTextureAttribute(textures, GL_STATIC_DRAW, 3);
+	_meshDedos.SetIndices(indices, GL_STATIC_DRAW);
+
+	_meshPulgar.CreateMesh(positions.size());
+	_meshPulgar.SetPositionAttribute(positions, GL_STATIC_DRAW, 0);
+	_meshPulgar.SetColorAttribute(colors, GL_STATIC_DRAW, 1);
+	_meshPulgar.SetNormalAttibute(normales, GL_STATIC_DRAW, 2);
+	_meshPulgar.SetTextureAttribute(textures, GL_STATIC_DRAW, 3);
+	_meshPulgar.SetIndices(indices, GL_STATIC_DRAW);
+
 	_shaderDepth.CreateProgram();
 	_shaderDepth.SetAttribute(0, "VertexPosition");
 	_shaderDepth.AttachShader("Depth.vert", GL_VERTEX_SHADER);
@@ -242,32 +257,30 @@ void Initialize() {
 
 	/* PALMA DE LA MANO */
 	_geometriaPalma.SetPosition(0.0f, 0.0f, 0.0f);
-	//_geometriaPalma.SetRotation(-45.0f, 0.0f, 0.0f);
+	_geometriaPalma.SetRotation(-60.0f, 0.0f, 0.0f);
 	_geometriaPalma.SetScale(0.4f, 0.5f, 0.05f);
 
 	/* DEDO INDICE */
-	_geometriaIndice.SetPosition(-0.8f, 3.05f, 0.0f);
-	_geometriaIndice.SetScale(0.25f, 0.4f, 0.15f);
-	_geometriaIndiceArriba.SetPosition(-0.8f, 4.3f, 0.0f);
-	_geometriaIndiceArriba.SetScale(0.25f, 0.4f, 0.15f);
-
+	_geometriaIndice.SetPosition(-2.0f, 6.25f, 0.0f);
+	_geometriaIndice.SetScale(0.25f, 0.4f, 0.9f);
+	_geometriaIndiceArriba.SetPosition(0, 7.05f, 0.0f);
+	
 	/* DEDO MEDIO*/
-	_geometriaMedio.SetPosition(0.0f, 3.05f, 0.0f);
-	_geometriaMedio.SetScale(0.25f, 0.4f, 0.15f);
-	_geometriaMedioArriba.SetPosition(0.0f, 4.3f, 0.0f);
-	_geometriaMedioArriba.SetScale(0.25f, 0.4f, 0.15f);
+	_geometriaMedio.SetPosition(0.0f, 6.25f, 0.0f);
+	_geometriaMedio.SetScale(0.25f, 0.4f, 0.9f);
+	_geometriaMedioArriba.SetPosition(0, 7.05f, 0.0f);
+
 
 	/* DEDO MENIQUE*/
-	_geometriaMenique.SetPosition(0.8f, 3.05f, 0.0f);
-	_geometriaMenique.SetScale(0.25f, 0.4f, 0.15f);
-	_geometriaMeniqueArriba.SetPosition(0.8f, 4.3f, 0.0f);
-	_geometriaMeniqueArriba.SetScale(0.25f, 0.4f, 0.15f);
+	_geometriaMenique.SetPosition(2.0f, 6.25f, 0.0f);
+	_geometriaMenique.SetScale(0.25f, 0.4f, 0.9f);
+	_geometriaMeniqueArriba.SetPosition(0, 7.05f, 0.0f);
+
 
 	/* DEDO PULGAR */
-	_geometriaPulgar.SetPosition(-1.8f, 0.0f, 0.0f);
-	_geometriaPulgar.SetScale(0.4f, 0.25f, 0.15f);
-	_geometriaPulgarArriba.SetPosition(-2.85f, 0.0f, 0.0f);
-	_geometriaPulgarArriba.SetScale(0.4f, 0.25f, 0.15f);
+	_geometriaPulgar.SetPosition(-4.5f, 0.0f, 0.0f);
+	_geometriaPulgar.SetScale(0.4f, 0.25f, 0.9f);
+	_geometriaPulgarArriba.SetPosition(-6.5f, 0.0f, 0.0f);
 
 	/* PISO */
 	_geometriaPiso.SetScale(8.0f, 0.1f, 8.0f); //Escala piramide 2
@@ -288,7 +301,7 @@ void Initialize() {
 }
 
 void GameLoop() {
-	//_geometriaPalma.Rotate(0.0f, 0.05f, 0.0f, true);
+	_geometriaPalma.Rotate(0.0f, 0.05f, 0.0f, true);
 	
 	_depthbuffer.Bind();
 	//Limpimos el buffer de color y el buffer de profundidad. Siempre hacerlo al inicio del frame.
@@ -299,25 +312,25 @@ void GameLoop() {
 	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaPalma.GetModelMatrix());
 	_mesh.Draw(GL_TRIANGLES);
 	/* SOMBRA INDICE */
-	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaIndice.GetModelMatrix()*_geometriaPalma.GetModelMatrix());
-	_mesh.Draw(GL_TRIANGLES);
-	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaIndiceArriba.GetModelMatrix()*_geometriaPalma.GetModelMatrix());
-	_mesh.Draw(GL_TRIANGLES);
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaIndice.GetModelMatrix());
+	_meshDedos.Draw(GL_TRIANGLES);
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaIndice.GetModelMatrix() * _geometriaIndiceArriba.GetModelMatrix());
+	_meshDedos.Draw(GL_TRIANGLES);
 	/* SOMBRA MEDIO */
-	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaMedio.GetModelMatrix()*_geometriaPalma.GetModelMatrix());
-	_mesh.Draw(GL_TRIANGLES);
-	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaMedioArriba.GetModelMatrix()*_geometriaPalma.GetModelMatrix());
-	_mesh.Draw(GL_TRIANGLES);
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() *_geometriaPalma.GetModelMatrix() * _geometriaMedio.GetModelMatrix());
+	_meshDedos.Draw(GL_TRIANGLES);
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() *_geometriaPalma.GetModelMatrix()  * _geometriaMedio.GetModelMatrix() * _geometriaMedioArriba.GetModelMatrix());
+	_meshDedos.Draw(GL_TRIANGLES);
 	/* SOMBRA MENIQUE */
-	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaMenique.GetModelMatrix()*_geometriaPalma.GetModelMatrix());
-	_mesh.Draw(GL_TRIANGLES);
-	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaMeniqueArriba.GetModelMatrix()*_geometriaPalma.GetModelMatrix());
-	_mesh.Draw(GL_TRIANGLES);
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() *_geometriaPalma.GetModelMatrix() * _geometriaMenique.GetModelMatrix());
+	_meshDedos.Draw(GL_TRIANGLES);
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() *_geometriaPalma.GetModelMatrix() * _geometriaMenique.GetModelMatrix() * _geometriaMeniqueArriba.GetModelMatrix());
+	_meshDedos.Draw(GL_TRIANGLES);
 	/*SOMBRA PULGAR*/
-	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaPulgar.GetModelMatrix()*_geometriaPalma.GetModelMatrix());
-	_mesh.Draw(GL_TRIANGLES);
-	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaPulgarArriba.GetModelMatrix()*_geometriaPalma.GetModelMatrix());
-	_mesh.Draw(GL_TRIANGLES);
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() *_geometriaPalma.GetModelMatrix() * _geometriaPulgar.GetModelMatrix());
+	_meshPulgar.Draw(GL_TRIANGLES);
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection()*_geometriaPalma.GetModelMatrix() * _geometriaPulgar.GetModelMatrix() * _geometriaPulgarArriba.GetModelMatrix());
+	_meshPulgar.Draw(GL_TRIANGLES);
 	/* SOMBRA PISO*/
 	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaPiso.GetModelMatrix());
 	_mesh.Draw(GL_TRIANGLES);
@@ -355,7 +368,7 @@ void GameLoop() {
 	_shaderPuerco.Activate();
 	_shaderPuerco.SetUniformMatrix("modelMatrix", _geometriaIndice.GetModelMatrix());
 	_shaderPuerco.SetUniformMatrix("LightVPMatrix", _camaraLuz.GetViewProjection());
-	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaIndice.GetModelMatrix() * _geometriaPalma.GetModelMatrix());
+	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaIndice.GetModelMatrix() );
 	_shaderPuerco.SetUniformVector("CamaraPosition", _camara.GetPosition());
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Bind();
@@ -372,10 +385,11 @@ void GameLoop() {
 	_depthbuffer.UnbindDepthMap();
 	_shaderPuerco.Deactivate();
 
+	
 	_shaderPuerco.Activate();
 	_shaderPuerco.SetUniformMatrix("modelMatrix", _geometriaIndiceArriba.GetModelMatrix());
 	_shaderPuerco.SetUniformMatrix("LightVPMatrix", _camaraLuz.GetViewProjection());
-	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaIndiceArriba.GetModelMatrix() * _geometriaPalma.GetModelMatrix());
+	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaPalma.GetModelMatrix()  * _geometriaIndice.GetModelMatrix() * _geometriaIndiceArriba.GetModelMatrix());
 	_shaderPuerco.SetUniformVector("CamaraPosition", _camara.GetPosition());
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Bind();
@@ -396,7 +410,7 @@ void GameLoop() {
 	_shaderPuerco.Activate();
 	_shaderPuerco.SetUniformMatrix("modelMatrix", _geometriaMedio.GetModelMatrix());
 	_shaderPuerco.SetUniformMatrix("LightVPMatrix", _camaraLuz.GetViewProjection());
-	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaMedio.GetModelMatrix() * _geometriaPalma.GetModelMatrix());
+	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaMedio.GetModelMatrix() );
 	_shaderPuerco.SetUniformVector("CamaraPosition", _camara.GetPosition());
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Bind();
@@ -404,7 +418,7 @@ void GameLoop() {
 	myTexture3.Bind();
 	glActiveTexture(GL_TEXTURE2);
 	_depthbuffer.BindDepthMap();
-	_mesh.Draw(GL_TRIANGLES);
+	_meshDedos.Draw(GL_TRIANGLES);
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Unbind();
 	glActiveTexture(GL_TEXTURE1);
@@ -416,7 +430,7 @@ void GameLoop() {
 	_shaderPuerco.Activate();
 	_shaderPuerco.SetUniformMatrix("modelMatrix", _geometriaMedioArriba.GetModelMatrix());
 	_shaderPuerco.SetUniformMatrix("LightVPMatrix", _camaraLuz.GetViewProjection());
-	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaMedioArriba.GetModelMatrix() * _geometriaPalma.GetModelMatrix());
+	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaMedio.GetModelMatrix() * _geometriaMedioArriba.GetModelMatrix());
 	_shaderPuerco.SetUniformVector("CamaraPosition", _camara.GetPosition());
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Bind();
@@ -424,7 +438,7 @@ void GameLoop() {
 	myTexture3.Bind();
 	glActiveTexture(GL_TEXTURE2);
 	_depthbuffer.BindDepthMap();
-	_mesh.Draw(GL_TRIANGLES);
+	_meshDedos.Draw(GL_TRIANGLES);
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Unbind();
 	glActiveTexture(GL_TEXTURE1);
@@ -437,7 +451,7 @@ void GameLoop() {
 	_shaderPuerco.Activate();
 	_shaderPuerco.SetUniformMatrix("modelMatrix", _geometriaMenique.GetModelMatrix());
 	_shaderPuerco.SetUniformMatrix("LightVPMatrix", _camaraLuz.GetViewProjection());
-	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaMenique.GetModelMatrix() * _geometriaPalma.GetModelMatrix());
+	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaMenique.GetModelMatrix());
 	_shaderPuerco.SetUniformVector("CamaraPosition", _camara.GetPosition());
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Bind();
@@ -445,7 +459,7 @@ void GameLoop() {
 	myTexture3.Bind();
 	glActiveTexture(GL_TEXTURE2);
 	_depthbuffer.BindDepthMap();
-	_mesh.Draw(GL_TRIANGLES);
+	_meshDedos.Draw(GL_TRIANGLES);
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Unbind();
 	glActiveTexture(GL_TEXTURE1);
@@ -457,7 +471,7 @@ void GameLoop() {
 	_shaderPuerco.Activate();
 	_shaderPuerco.SetUniformMatrix("modelMatrix", _geometriaMeniqueArriba.GetModelMatrix());
 	_shaderPuerco.SetUniformMatrix("LightVPMatrix", _camaraLuz.GetViewProjection());
-	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaMeniqueArriba.GetModelMatrix() * _geometriaPalma.GetModelMatrix());
+	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection()  * _geometriaPalma.GetModelMatrix() * _geometriaMenique.GetModelMatrix() * _geometriaMeniqueArriba.GetModelMatrix());
 	_shaderPuerco.SetUniformVector("CamaraPosition", _camara.GetPosition());
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Bind();
@@ -465,7 +479,7 @@ void GameLoop() {
 	myTexture3.Bind();
 	glActiveTexture(GL_TEXTURE2);
 	_depthbuffer.BindDepthMap();
-	_mesh.Draw(GL_TRIANGLES);
+	_meshDedos.Draw(GL_TRIANGLES);
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Unbind();
 	glActiveTexture(GL_TEXTURE1);
@@ -475,10 +489,11 @@ void GameLoop() {
 	_shaderPuerco.Deactivate();
 
 	/* DIBUJANDO DEDO PULGAR */
+
 	_shaderPuerco.Activate();
 	_shaderPuerco.SetUniformMatrix("modelMatrix", _geometriaPulgar.GetModelMatrix());
 	_shaderPuerco.SetUniformMatrix("LightVPMatrix", _camaraLuz.GetViewProjection());
-	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaPulgar.GetModelMatrix() * _geometriaPalma.GetModelMatrix());
+	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() *_geometriaPalma.GetModelMatrix() * _geometriaPulgar.GetModelMatrix());
 	_shaderPuerco.SetUniformVector("CamaraPosition", _camara.GetPosition());
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Bind();
@@ -486,7 +501,7 @@ void GameLoop() {
 	myTexture3.Bind();
 	glActiveTexture(GL_TEXTURE2);
 	_depthbuffer.BindDepthMap();
-	_mesh.Draw(GL_TRIANGLES);
+	_meshPulgar.Draw(GL_TRIANGLES);
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Unbind();
 	glActiveTexture(GL_TEXTURE1);
@@ -498,7 +513,7 @@ void GameLoop() {
 	_shaderPuerco.Activate();
 	_shaderPuerco.SetUniformMatrix("modelMatrix", _geometriaPulgarArriba.GetModelMatrix());
 	_shaderPuerco.SetUniformMatrix("LightVPMatrix", _camaraLuz.GetViewProjection());
-	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaPulgarArriba.GetModelMatrix() * _geometriaPalma.GetModelMatrix());
+	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() *_geometriaPalma.GetModelMatrix() * _geometriaPulgar.GetModelMatrix() * _geometriaPulgarArriba.GetModelMatrix());
 	_shaderPuerco.SetUniformVector("CamaraPosition", _camara.GetPosition());
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Bind();
@@ -506,7 +521,7 @@ void GameLoop() {
 	myTexture3.Bind();
 	glActiveTexture(GL_TEXTURE2);
 	_depthbuffer.BindDepthMap();
-	_mesh.Draw(GL_TRIANGLES);
+	_meshPulgar.Draw(GL_TRIANGLES);
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Unbind();
 	glActiveTexture(GL_TEXTURE1);
