@@ -47,6 +47,8 @@ Texture2D myTexture2;
 Texture2D myTexture3;
 Dephtbuffer _depthbuffer;
 
+float rotacionIndice = 0.05f, rotacionMedio = 0.04f, rotacionMenique = 0.03f, rotacionPulgar = 0.05f;
+
 void Initialize() {
 	//Creando toda la memoria que el programa va a utilizar
 
@@ -373,19 +375,19 @@ void Initialize() {
 	/* DEDO INDICE */
 	_geometriaInvisibleIndice.SetPosition(-1.5f, 2.7f, 0.0f);
 	_geometriaIndice.SetPosition(0, 0.4f, 0.0f);
-	_geometriaInvisibleIndiceArriba.SetPosition(0,0.9f,0);
+	_geometriaInvisibleIndiceArriba.SetPosition(0, 0.9f, -0.3f);
 	_geometriaIndiceArriba.SetPosition(0, 0.9f, 0.0f);
 	
 	/* DEDO MEDIO*/
 	_geometriaInvisibleMedio.SetPosition(0.0f,2.7f,0.0f);
 	_geometriaMedio.SetPosition(0.0f, 0.4f, 0.0f);
-	_geometriaInvisibleMedioArriba.SetPosition(0, 0.9f, 0);
+	_geometriaInvisibleMedioArriba.SetPosition(0, 0.9f, -0.3f);
 	_geometriaMedioArriba.SetPosition(0, 0.9f, 0.0f);
 
 	/* DEDO MENIQUE*/
 	_geometriaInvisibleMenique.SetPosition(1.5f, 2.7f, 0.0f);
 	_geometriaMenique.SetPosition(0.0f, 0.4f, 0.0f);
-	_geometriaInvisibleMeniqueArriba.SetPosition(0, 0.9f, 0);
+	_geometriaInvisibleMeniqueArriba.SetPosition(0, 0.9f, -0.3f);
 	_geometriaMeniqueArriba.SetPosition(0, 0.9f, 0.0f);
 
 	/* DEDO PULGAR */
@@ -400,7 +402,7 @@ void Initialize() {
 
 	/* CAMARAS */
 	_camara.SetPosition(0.0f, 6.0f, 10.0f);
-	_camaraLuz.SetPosition(-3.0f, 5.0f, 5.0f);
+	_camaraLuz.SetPosition(-3.0f, 7.0f, 5.0f);
 	_camara.Rotate(-25.0f, 0.0f, 0.0f, false);
 	_camaraLuz.SetOrthographic(15.0f, 1.0f);
 	_camaraLuz.Rotate(-75.0f, 0.0f, 0.0f, false);
@@ -413,16 +415,46 @@ void Initialize() {
 
 void GameLoop() {
 	_geometriaPalma.Rotate(0.0, 0.05f, 0.0, true);
+	if (_geometriaInvisibleIndice.GetRotation().x >= 0.70f) {
+		rotacionIndice *= -1.0f;
+	}
+	else if (_geometriaInvisibleIndice.GetRotation().x <= 0.0f) {
+		rotacionIndice *= -1.0f;
+	}
+
+
+	if (_geometriaInvisibleMedio.GetRotation().x >= 0.70f) {
+		rotacionMedio *= -1.0f;
+	}
+	else if (_geometriaInvisibleMedio.GetRotation().x <= 0.0f) {
+		rotacionMedio *= -1.0f;
+	}
+
+
+	if (_geometriaInvisibleMenique.GetRotation().x >= 0.70f) {
+		rotacionMenique *= -1.0f;
+	}
+	else if (_geometriaInvisibleMenique.GetRotation().x <= 0.0f) {
+		rotacionMenique *= -1.0f;
+	}
+
+	if (_geometriaInvisiblePulgar.GetRotation().y >= 0.70f) {
+		rotacionPulgar *= -1.0f;
+	}
+	else if (_geometriaInvisiblePulgar.GetRotation().y <= 0.0f) {
+		rotacionPulgar *= -1.0f;
+	}
+
+
+	_geometriaInvisibleIndice.Rotate(rotacionIndice,0.0f,0,true);
+	_geometriaInvisibleMedio.Rotate(rotacionIndice, 0.0f, 0, true);
+	_geometriaInvisibleMenique.Rotate(rotacionIndice, 0.0f, 0, true);
+	_geometriaInvisiblePulgar.Rotate(0.0f, rotacionIndice, 0.0f, true);
 	
-	_geometriaInvisibleIndice.Rotate(0.05f,0.0f,0,true);
-	_geometriaInvisibleMedio.Rotate(0.05f, 0.0f, 0, true);
-	_geometriaInvisibleMenique.Rotate(0.05f, 0.0f, 0, true);
-	_geometriaInvisiblePulgar.Rotate(0.0f, 0.05f, 0.0f, true);
-	
-	_geometriaInvisibleIndiceArriba.Rotate(0.05f, 0, 0, true);
-	_geometriaInvisibleMedioArriba.Rotate(0.05f, 0, 0, true);
-	_geometriaInvisibleMeniqueArriba.Rotate(0.05, 0, 0, true);
-	_geometriaInvisiblePulgarArriba.Rotate(0, 0.05f, 0, true);
+	_geometriaInvisibleIndiceArriba.Rotate(rotacionIndice, 0, 0, true);
+	_geometriaInvisibleMedioArriba.Rotate(rotacionMedio, 0, 0, true);
+	_geometriaInvisibleMeniqueArriba.Rotate(rotacionMenique, 0, 0, true);
+	_geometriaInvisiblePulgarArriba.Rotate(0.0f, rotacionPulgar, 0, true);
 	_depthbuffer.Bind();
 	//Limpimos el buffer de color y el buffer de profundidad. Siempre hacerlo al inicio del frame.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
