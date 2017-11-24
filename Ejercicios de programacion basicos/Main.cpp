@@ -2,9 +2,10 @@
 
 Materia: Grficas Computacionales
 
-Fecha: 23 de octubre de 2017
+Fecha: 24 de Noviembre de 2017
 
-Autor: A01375758 Luis Fernando Espinosa Elizalde
+Autores:
+A01375758 Luis Fernando Espinosa Elizalde
 A01375640 Brandon Alain Cruz Ruiz
 
 *********************************************************/
