@@ -22,7 +22,7 @@ A01375640 Brandon Alain Cruz Ruiz
 #include "Texture2D.h"
 #include "Dephtbuffer.h"
 
-Mesh _mesh, _meshDedos, _meshPulgar;
+Mesh _mesh, _meshDedos, _meshPulgar, _meshPiso;
 ShaderProgram _shaderProgram;
 ShaderProgram _shaderPuerco;
 ShaderProgram _shaderDepth;
@@ -36,7 +36,10 @@ Transform _geometriaMedioArriba;
 Transform _geometriaMeniqueArriba;
 Transform _geometriaPulgar;
 Transform _geometriaPulgarArriba;
-Transform _geometriaInvisible;
+Transform _geometriaInvisibleIndice, _geometriaInvisibleIndiceArriba;
+Transform _geometriaInvisibleMedio, _geometriaInvisibleMedioArriba;
+Transform _geometriaInvisibleMenique, _geometriaInvisibleMeniqueArriba;
+Transform _geometriaInvisiblePulgar, _geometriaInvisiblePulgarArriba;
 Camera _camara;
 Camera _camaraLuz;
 Texture2D myTexture;
@@ -49,42 +52,141 @@ void Initialize() {
 
 	//Creacin del atributo de posiciones de estos vertices. Lista de vec2.
 	//Claramente en CPU y RAM
-	std::vector<glm::vec3> positions;
+	std::vector<glm::vec3> positionsPiso, positions, positionsDedos, positionsPulgar;
 	std::vector<glm::vec3> colors;
 	std::vector<glm::vec3> normales;
 	std::vector<glm::vec2> textures;
 
-	//Posiciones Cubo 
+	//Cubo piso
 	//Cara derecha
-	positions.push_back(glm::vec3(3.0f, 0, 3.0f));  //Esquina inferior derecha trasera => 0
-	positions.push_back(glm::vec3(3.0f, 0, -3.0f)); //Esquina superior derecha trasera => 1
-	positions.push_back(glm::vec3(3.0f, 6.0f, -3.0f)); //Esquina superior derecha delantera => 2
-	positions.push_back(glm::vec3(3.0f, 6.0f, 3.0f)); //Esquina inferior derecha delantera => 3, conecta triangulo con 0 y 2
+	positionsPiso.push_back(glm::vec3(3.0f, 0, 3.0f));  //Esquina inferior derecha trasera => 0
+	positionsPiso.push_back(glm::vec3(3.0f, 0, -3.0f)); //Esquina superior derecha trasera => 1
+	positionsPiso.push_back(glm::vec3(3.0f, 6.0f, -3.0f)); //Esquina superior derecha delantera => 2
+	positionsPiso.push_back(glm::vec3(3.0f, 6.0f, 3.0f)); //Esquina inferior derecha delantera => 3, conecta triangulo con 0 y 2
 													  //Cara de enfrente
-	positions.push_back(glm::vec3(-3.0f, 0, 3.0f)); //Esquina inferior izquierda delantera => 4
-	positions.push_back(glm::vec3(3.0f, 0, 3.0f)); //Esquina inferior derecha delantera => 5
-	positions.push_back(glm::vec3(3.0f, 6.0f, 3.0f)); //Esquina superior derecha delantera => 6
-	positions.push_back(glm::vec3(-3.0f, 6.0f, 3.0f)); //Esquina superior izquierda delantera => 7, conecta triangulo con 4 y 6
+	positionsPiso.push_back(glm::vec3(-3.0f, 0, 3.0f)); //Esquina inferior izquierda delantera => 4
+	positionsPiso.push_back(glm::vec3(3.0f, 0, 3.0f)); //Esquina inferior derecha delantera => 5
+	positionsPiso.push_back(glm::vec3(3.0f, 6.0f, 3.0f)); //Esquina superior derecha delantera => 6
+	positionsPiso.push_back(glm::vec3(-3.0f, 6.0f, 3.0f)); //Esquina superior izquierda delantera => 7, conecta triangulo con 4 y 6
 													   //Cara izquierda
-	positions.push_back(glm::vec3(-3.0f, 0, -3.0f)); //Esquina inferior izquierda trasera => 8
-	positions.push_back(glm::vec3(-3.0f, 0, 3.0f)); //Esquina inferior izquierda delantera => 9
-	positions.push_back(glm::vec3(-3.0f, 6.0f, 3.0f)); //Esquina superior izquierda delantera => 10
-	positions.push_back(glm::vec3(-3.0f, 6.0f, -3.0f)); //Esquina superior izquierda trasera => 11, conecta triangulo con 8 y 10
+	positionsPiso.push_back(glm::vec3(-3.0f, 0, -3.0f)); //Esquina inferior izquierda trasera => 8
+	positionsPiso.push_back(glm::vec3(-3.0f, 0, 3.0f)); //Esquina inferior izquierda delantera => 9
+	positionsPiso.push_back(glm::vec3(-3.0f, 6.0f, 3.0f)); //Esquina superior izquierda delantera => 10
+	positionsPiso.push_back(glm::vec3(-3.0f, 6.0f, -3.0f)); //Esquina superior izquierda trasera => 11, conecta triangulo con 8 y 10
 														//Cara de atras
-	positions.push_back(glm::vec3(3.0f, 0, -3.0f));  //Esquina inferior derecha trasera => 12
-	positions.push_back(glm::vec3(-3.0f, 0, -3.0f)); //Esquina inferior izquierda trasera => 13
-	positions.push_back(glm::vec3(-3.0f, 6.0f, -3.0f)); //Esquina superior izquierda trasera => 14
-	positions.push_back(glm::vec3(3.0f, 6.0f, -3.0f)); //Esquina superior derecha trasera => 15,conecta triangilo con 12 y 14
+	positionsPiso.push_back(glm::vec3(3.0f, 0, -3.0f));  //Esquina inferior derecha trasera => 12
+	positionsPiso.push_back(glm::vec3(-3.0f, 0, -3.0f)); //Esquina inferior izquierda trasera => 13
+	positionsPiso.push_back(glm::vec3(-3.0f, 6.0f, -3.0f)); //Esquina superior izquierda trasera => 14
+	positionsPiso.push_back(glm::vec3(3.0f, 6.0f, -3.0f)); //Esquina superior derecha trasera => 15,conecta triangilo con 12 y 14
 													   //Cara de abajo
-	positions.push_back(glm::vec3(3.0f, 0, 3.0f)); //Esquina inferior derecha delantera => 16
-	positions.push_back(glm::vec3(-3.0f, 0, 3.0f)); //Esquina inferior izquierda delantera => 17
-	positions.push_back(glm::vec3(-3.0f, 0, -3.0f)); //Esquina inferior izquierda trasera => 18
-	positions.push_back(glm::vec3(3.0f, 0, -3.0f));  //Esquina inferior derecha trasera => 19, conecta trangulo con 16 y 18
+	positionsPiso.push_back(glm::vec3(3.0f, 0, 3.0f)); //Esquina inferior derecha delantera => 16
+	positionsPiso.push_back(glm::vec3(-3.0f, 0, 3.0f)); //Esquina inferior izquierda delantera => 17
+	positionsPiso.push_back(glm::vec3(-3.0f, 0, -3.0f)); //Esquina inferior izquierda trasera => 18
+	positionsPiso.push_back(glm::vec3(3.0f, 0, -3.0f));  //Esquina inferior derecha trasera => 19, conecta trangulo con 16 y 18
 													 //Cara de arriba
-	positions.push_back(glm::vec3(3.0f, 6.0f, 3.0f)); //Esquina superior derecha delantera => 20
-	positions.push_back(glm::vec3(-3.0f, 6.0f, -3.0f)); //Esquina superior izquierda trasera => 21
-	positions.push_back(glm::vec3(-3.0f, 6.0f, 3.0f)); //Esquina superior izquierda delantera => 22
-	positions.push_back(glm::vec3(3.0f, 6.0f, -3.0f)); //Esquina superior derecha trasera => 23,conecta triangulo con 20 y 2
+	positionsPiso.push_back(glm::vec3(3.0f, 6.0f, 3.0f)); //Esquina superior derecha delantera => 20
+	positionsPiso.push_back(glm::vec3(-3.0f, 6.0f, -3.0f)); //Esquina superior izquierda trasera => 21
+	positionsPiso.push_back(glm::vec3(-3.0f, 6.0f, 3.0f)); //Esquina superior izquierda delantera => 22
+	positionsPiso.push_back(glm::vec3(3.0f, 6.0f, -3.0f)); //Esquina superior derecha trasera => 23,conecta triangulo con 20 y 2
+
+	//Posiciones Cubo  Palma
+	//Cara derecha
+	positions.push_back(glm::vec3(2.0f, -1.0f, 0.25f));  //Esquina inferior derecha delantera => 0
+	positions.push_back(glm::vec3(2.0f, -1.0f, -0.25f)); //Esquina inferior derecha trasera => 1
+	positions.push_back(glm::vec3(2.0f, 3.0f, -0.25f)); //Esquina superior derecha trasera => 2
+	positions.push_back(glm::vec3(2.0f, 3.0f, 0.25f)); //Esquina superrior derecha delantera => 3, conecta triangulo con 0 y 2
+													  //Cara de enfrente
+	positions.push_back(glm::vec3(-2.0f, -1.0f, 0.25f)); //Esquina inferior izquierda delantera => 4
+	positions.push_back(glm::vec3(2.0f, -1.0f, 0.25f)); //Esquina inferior derecha delantera => 5
+	positions.push_back(glm::vec3(2.0f, 3.0f, 0.25f)); //Esquina superior derecha delantera => 6
+	positions.push_back(glm::vec3(-2.0f, 3.0f, 0.25f)); //Esquina superior izquierda delantera => 7, conecta triangulo con 4 y 6
+													   //Cara izquierda
+	positions.push_back(glm::vec3(-2.0f, -1.0f, -0.25f)); //Esquina inferior izquierda trasera => 8
+	positions.push_back(glm::vec3(-2.0f, -1.0f, 0.25f)); //Esquina inferior izquierda delantera => 9
+	positions.push_back(glm::vec3(-2.0f, 3.0f, 0.25f)); //Esquina superior izquierda delantera => 10
+	positions.push_back(glm::vec3(-2.0f, 3.0f, -0.25f)); //Esquina superior izquierda trasera => 11, conecta triangulo con 8 y 10
+														//Cara de atras
+	positions.push_back(glm::vec3(2.0f, -1.0f, -0.25f));  //Esquina inferior derecha trasera => 12
+	positions.push_back(glm::vec3(-2.0f, -1.0f, -0.25f)); //Esquina inferior izquierda trasera => 13
+	positions.push_back(glm::vec3(-2.0f, 3.0f, -0.25f)); //Esquina superior izquierda trasera => 14
+	positions.push_back(glm::vec3(2.0f, 3.0f, -0.25f)); //Esquina superior derecha trasera => 15,conecta triangilo con 12 y 14
+													   //Cara de abajo
+	positions.push_back(glm::vec3(2.0f, -1.0f, 0.25f)); //Esquina inferior derecha delantera => 16
+	positions.push_back(glm::vec3(-2.0f, -1.0f, 0.25f)); //Esquina inferior izquierda delantera => 17
+	positions.push_back(glm::vec3(-2.0f, -1.0f, -0.25f)); //Esquina inferior izquierda trasera => 18
+	positions.push_back(glm::vec3(2.0f, -1.0f, -0.25f));  //Esquina inferior derecha trasera => 19, conecta trangulo con 16 y 18
+													 //Cara de arriba
+	positions.push_back(glm::vec3(2.0f, 3.0f, 0.25f)); //Esquina superior derecha delantera => 20
+	positions.push_back(glm::vec3(-2.0f, 3.0f, -0.25f)); //Esquina superior izquierda trasera => 21
+	positions.push_back(glm::vec3(-2.0f, 3.0f, 0.25f)); //Esquina superior izquierda delantera => 22
+	positions.push_back(glm::vec3(2.0f, 3.0f, -0.25f)); //Esquina superior derecha trasera => 23,conecta triangulo con 20 y 2
+
+	//Posiciones Cubo Dedos
+	//Cara derecha
+	positionsDedos.push_back(glm::vec3(0.625f, 0, 0.25f));  //Esquina inferior derecha delantera => 0
+	positionsDedos.push_back(glm::vec3(0.625f, 0, -0.25f)); //Esquina inferior derecha trasera => 1
+	positionsDedos.push_back(glm::vec3(0.625f, 1.5f, -0.25f)); //Esquina superior derecha trasera => 2
+	positionsDedos.push_back(glm::vec3(0.625f, 1.5f, 0.25f)); //Esquina superrior derecha delantera => 3, conecta triangulo con 0 y 2
+													   //Cara de enfrente
+	positionsDedos.push_back(glm::vec3(-0.625f, 0, 0.25f)); //Esquina inferior izquierda delantera => 4
+	positionsDedos.push_back(glm::vec3(0.625f, 0, 0.25f)); //Esquina inferior derecha delantera => 5
+	positionsDedos.push_back(glm::vec3(0.625f, 1.5f, 0.25f)); //Esquina superior derecha delantera => 6
+	positionsDedos.push_back(glm::vec3(-0.625f, 1.5f, 0.25f)); //Esquina superior izquierda delantera => 7, conecta triangulo con 4 y 6
+														//Cara izquierda
+	positionsDedos.push_back(glm::vec3(-0.625f, 0, -0.25f)); //Esquina inferior izquierda trasera => 8
+	positionsDedos.push_back(glm::vec3(-0.625f, 0, 0.25f)); //Esquina inferior izquierda delantera => 9
+	positionsDedos.push_back(glm::vec3(-0.625f, 1.5f, 0.25f)); //Esquina superior izquierda delantera => 10
+	positionsDedos.push_back(glm::vec3(-0.625f, 1.5f, -0.25f)); //Esquina superior izquierda trasera => 11, conecta triangulo con 8 y 10
+														 //Cara de atras
+	positionsDedos.push_back(glm::vec3(0.625f, 0, -0.25f));  //Esquina inferior derecha trasera => 12
+	positionsDedos.push_back(glm::vec3(-0.625f, 0, -0.25f)); //Esquina inferior izquierda trasera => 13
+	positionsDedos.push_back(glm::vec3(-0.625f, 1.5f, -0.25f)); //Esquina superior izquierda trasera => 14
+	positionsDedos.push_back(glm::vec3(0.625f, 1.5f, -0.25f)); //Esquina superior derecha trasera => 15,conecta triangilo con 12 y 14
+														//Cara de abajo
+	positionsDedos.push_back(glm::vec3(0.625f, 0, 0.25f)); //Esquina inferior derecha delantera => 16
+	positionsDedos.push_back(glm::vec3(-0.625f, 0, 0.25f)); //Esquina inferior izquierda delantera => 17
+	positionsDedos.push_back(glm::vec3(-0.625f, 0, -0.25f)); //Esquina inferior izquierda trasera => 18
+	positionsDedos.push_back(glm::vec3(0.625f, 0, -0.25f));  //Esquina inferior derecha trasera => 19, conecta trangulo con 16 y 18
+													  //Cara de arriba
+	positionsDedos.push_back(glm::vec3(0.625f, 1.5f, 0.25f)); //Esquina superior derecha delantera => 20
+	positionsDedos.push_back(glm::vec3(-0.625f, 1.5f, -0.25f)); //Esquina superior izquierda trasera => 21
+	positionsDedos.push_back(glm::vec3(-0.625f, 1.5f, 0.25f)); //Esquina superior izquierda delantera => 22
+	positionsDedos.push_back(glm::vec3(0.625f, 1.5f, -0.25f)); //Esquina superior derecha trasera => 23,conecta triangulo con 20 y 2
+
+
+	//Posiciones Cubo Pulgar
+	//Cara derecha
+	positionsPulgar.push_back(glm::vec3(0.75f, 0, 0.25f));  //Esquina inferior derecha delantera => 0
+	positionsPulgar.push_back(glm::vec3(0.75f, 0, -0.25f)); //Esquina inferior derecha trasera => 1
+	positionsPulgar.push_back(glm::vec3(0.75f, 1.0f, -0.25f)); //Esquina superior derecha trasera => 2
+	positionsPulgar.push_back(glm::vec3(0.75f, 1.0f, 0.25f)); //Esquina superrior derecha delantera => 3, conecta triangulo con 0 y 2
+															  //Cara de enfrente
+	positionsPulgar.push_back(glm::vec3(-0.75f, 0, 0.25f)); //Esquina inferior izquierda delantera => 4
+	positionsPulgar.push_back(glm::vec3(0.75f, 0, 0.25f)); //Esquina inferior derecha delantera => 5
+	positionsPulgar.push_back(glm::vec3(0.75f, 1.0f, 0.25f)); //Esquina superior derecha delantera => 6
+	positionsPulgar.push_back(glm::vec3(-0.75f, 1.0f, 0.25f)); //Esquina superior izquierda delantera => 7, conecta triangulo con 4 y 6
+															   //Cara izquierda
+	positionsPulgar.push_back(glm::vec3(-0.75f, 0, -0.25f)); //Esquina inferior izquierda trasera => 8
+	positionsPulgar.push_back(glm::vec3(-0.75f, 0, 0.25f)); //Esquina inferior izquierda delantera => 9
+	positionsPulgar.push_back(glm::vec3(-0.75f, 1.0f, 0.25f)); //Esquina superior izquierda delantera => 10
+	positionsPulgar.push_back(glm::vec3(-0.75f, 1.0f, -0.25f)); //Esquina superior izquierda trasera => 11, conecta triangulo con 8 y 10
+																//Cara de atras
+	positionsPulgar.push_back(glm::vec3(0.75f, 0, -0.25f));  //Esquina inferior derecha trasera => 12
+	positionsPulgar.push_back(glm::vec3(-0.75f, 0, -0.25f)); //Esquina inferior izquierda trasera => 13
+	positionsPulgar.push_back(glm::vec3(-0.75f, 1.0f, -0.25f)); //Esquina superior izquierda trasera => 14
+	positionsPulgar.push_back(glm::vec3(0.75f, 1.0f, -0.25f)); //Esquina superior derecha trasera => 15,conecta triangilo con 12 y 14
+															   //Cara de abajo
+	positionsPulgar.push_back(glm::vec3(0.75f, 0, 0.25f)); //Esquina inferior derecha delantera => 16
+	positionsPulgar.push_back(glm::vec3(-0.75f, 0, 0.25f)); //Esquina inferior izquierda delantera => 17
+	positionsPulgar.push_back(glm::vec3(-0.75f, 0, -0.25f)); //Esquina inferior izquierda trasera => 18
+	positionsPulgar.push_back(glm::vec3(0.75f, 0, -0.25f));  //Esquina inferior derecha trasera => 19, conecta trangulo con 16 y 18
+															 //Cara de arriba
+	positionsPulgar.push_back(glm::vec3(0.75f, 1.0f, 0.25f)); //Esquina superior derecha delantera => 20
+	positionsPulgar.push_back(glm::vec3(-0.75f, 1.0f, -0.25f)); //Esquina superior izquierda trasera => 21
+	positionsPulgar.push_back(glm::vec3(-0.75f, 1.0f, 0.25f)); //Esquina superior izquierda delantera => 22
+	positionsPulgar.push_back(glm::vec3(0.75f, 1.0f, -0.25f)); //Esquina superior derecha trasera => 23,conecta triangulo con 20 y 2
+
+
 
 													   //Colores Cubo
 													   //Color cara 1
@@ -200,18 +302,27 @@ void Initialize() {
 	_mesh.SetIndices(indices, GL_STATIC_DRAW);
 
 	_meshDedos.CreateMesh(positions.size());
-	_meshDedos.SetPositionAttribute(positions, GL_STATIC_DRAW, 0);
+	_meshDedos.SetPositionAttribute(positionsDedos, GL_STATIC_DRAW, 0);
 	_meshDedos.SetColorAttribute(colors, GL_STATIC_DRAW, 1);
 	_meshDedos.SetNormalAttibute(normales, GL_STATIC_DRAW, 2);
 	_meshDedos.SetTextureAttribute(textures, GL_STATIC_DRAW, 3);
 	_meshDedos.SetIndices(indices, GL_STATIC_DRAW);
 
 	_meshPulgar.CreateMesh(positions.size());
-	_meshPulgar.SetPositionAttribute(positions, GL_STATIC_DRAW, 0);
+	_meshPulgar.SetPositionAttribute(positionsPulgar, GL_STATIC_DRAW, 0);
 	_meshPulgar.SetColorAttribute(colors, GL_STATIC_DRAW, 1);
 	_meshPulgar.SetNormalAttibute(normales, GL_STATIC_DRAW, 2);
 	_meshPulgar.SetTextureAttribute(textures, GL_STATIC_DRAW, 3);
 	_meshPulgar.SetIndices(indices, GL_STATIC_DRAW);
+
+
+	_meshPiso.CreateMesh(positionsPiso.size());
+	_meshPiso.SetPositionAttribute(positionsPiso, GL_STATIC_DRAW, 0);
+	_meshPiso.SetColorAttribute(colors, GL_STATIC_DRAW, 1);
+	_meshPiso.SetNormalAttibute(normales, GL_STATIC_DRAW, 2);
+	_meshPiso.SetTextureAttribute(textures, GL_STATIC_DRAW, 3);
+	_meshPiso.SetIndices(indices, GL_STATIC_DRAW);
+
 
 	_shaderDepth.CreateProgram();
 	_shaderDepth.SetAttribute(0, "VertexPosition");
@@ -257,32 +368,33 @@ void Initialize() {
 
 	/* PALMA DE LA MANO */
 	_geometriaPalma.SetPosition(0.0f, 0.0f, 0.0f);
-	_geometriaPalma.SetRotation(-60.0f, 0.0f, 0.0f);
-	_geometriaPalma.SetScale(0.4f, 0.5f, 0.05f);
+	_geometriaPalma.Rotate(-60.0f, 0, 0, true);
 
 	/* DEDO INDICE */
-	_geometriaIndice.SetPosition(-2.0f, 6.25f, 0.0f);
-	_geometriaIndice.SetScale(0.25f, 0.4f, 0.9f);
-	_geometriaIndiceArriba.SetPosition(0, 7.05f, 0.0f);
+	_geometriaInvisibleIndice.SetPosition(-1.5f, 2.7f, 0.0f);
+	_geometriaIndice.SetPosition(0, 0.4f, 0.0f);
+	_geometriaInvisibleIndiceArriba.SetPosition(0,0.9f,0);
+	_geometriaIndiceArriba.SetPosition(0, 0.9f, 0.0f);
 	
 	/* DEDO MEDIO*/
-	_geometriaMedio.SetPosition(0.0f, 6.25f, 0.0f);
-	_geometriaMedio.SetScale(0.25f, 0.4f, 0.9f);
-	_geometriaMedioArriba.SetPosition(0, 7.05f, 0.0f);
-
+	_geometriaInvisibleMedio.SetPosition(0.0f,2.7f,0.0f);
+	_geometriaMedio.SetPosition(0.0f, 0.4f, 0.0f);
+	_geometriaInvisibleMedioArriba.SetPosition(0, 0.9f, 0);
+	_geometriaMedioArriba.SetPosition(0, 0.9f, 0.0f);
 
 	/* DEDO MENIQUE*/
-	_geometriaMenique.SetPosition(2.0f, 6.25f, 0.0f);
-	_geometriaMenique.SetScale(0.25f, 0.4f, 0.9f);
-	_geometriaMeniqueArriba.SetPosition(0, 7.05f, 0.0f);
-
+	_geometriaInvisibleMenique.SetPosition(1.5f, 2.7f, 0.0f);
+	_geometriaMenique.SetPosition(0.0f, 0.4f, 0.0f);
+	_geometriaInvisibleMeniqueArriba.SetPosition(0, 0.9f, 0);
+	_geometriaMeniqueArriba.SetPosition(0, 0.9f, 0.0f);
 
 	/* DEDO PULGAR */
-	_geometriaPulgar.SetPosition(-4.5f, 0.0f, 0.0f);
-	_geometriaPulgar.SetScale(0.4f, 0.25f, 0.9f);
-	_geometriaPulgarArriba.SetPosition(-6.5f, 0.0f, 0.0f);
+	_geometriaInvisiblePulgar.SetPosition(-2.0f, -0.75f, 0.0f);
+	_geometriaPulgar.SetPosition(-0.9f, 0.0f, 0.0f);
+	_geometriaInvisiblePulgarArriba.SetPosition(-0.45f,0,0.0f);
+	_geometriaPulgarArriba.SetPosition(-1.2f, 0.0f, 0.0f);
 
-	/* PISO */
+	/* PISO */	
 	_geometriaPiso.SetScale(8.0f, 0.1f, 8.0f); //Escala piramide 2
 	_geometriaPiso.SetPosition(0.0f, -2.5f, 0.0f);
 
@@ -297,43 +409,56 @@ void Initialize() {
 	myTexture2.LoadTexture("floor.jpg");
 	myTexture3.LoadTexture("puerco.png");
 
-
 }
 
 void GameLoop() {
-	_geometriaPalma.Rotate(0.0f, 0.05f, 0.0f, true);
+	_geometriaPalma.Rotate(0.0, 0.05f, 0.0, true);
 	
+	_geometriaInvisibleIndice.Rotate(0.05f,0.0f,0,true);
+	_geometriaInvisibleMedio.Rotate(0.05f, 0.0f, 0, true);
+	_geometriaInvisibleMenique.Rotate(0.05f, 0.0f, 0, true);
+	_geometriaInvisiblePulgar.Rotate(0.0f, 0.05f, 0.0f, true);
+	
+	_geometriaInvisibleIndiceArriba.Rotate(0.05f, 0, 0, true);
+	_geometriaInvisibleMedioArriba.Rotate(0.05f, 0, 0, true);
+	_geometriaInvisibleMeniqueArriba.Rotate(0.05, 0, 0, true);
+	_geometriaInvisiblePulgarArriba.Rotate(0, 0.05f, 0, true);
 	_depthbuffer.Bind();
 	//Limpimos el buffer de color y el buffer de profundidad. Siempre hacerlo al inicio del frame.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//Jerarquias de multiplicaciones en las matrices
+	// Padre (Palma) * Nodo Invisible (Articulación) * Hijo Bajo (Parte del dedo de abajo) * Hijo Superior (Parte del dedo de arriba)
+	//Se tiene que aplicar tanto en sombras como en el dibujado
+	//No aplicar escalas a las transformaciones jerarquicas porque se distorsionan las figuras
 
 	_shaderDepth.Activate();
 	/* SOMBRA PALMA */
 	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaPalma.GetModelMatrix());
 	_mesh.Draw(GL_TRIANGLES);
 	/* SOMBRA INDICE */
-	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaIndice.GetModelMatrix());
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaInvisibleIndice.GetModelMatrix() * _geometriaIndice.GetModelMatrix());
 	_meshDedos.Draw(GL_TRIANGLES);
-	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaIndice.GetModelMatrix() * _geometriaIndiceArriba.GetModelMatrix());
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaInvisibleIndice.GetModelMatrix() * _geometriaIndice.GetModelMatrix() * _geometriaInvisibleIndiceArriba.GetModelMatrix() *_geometriaIndiceArriba.GetModelMatrix());
 	_meshDedos.Draw(GL_TRIANGLES);
 	/* SOMBRA MEDIO */
-	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() *_geometriaPalma.GetModelMatrix() * _geometriaMedio.GetModelMatrix());
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() *_geometriaPalma.GetModelMatrix() *  _geometriaInvisibleMedio.GetModelMatrix() * _geometriaMedio.GetModelMatrix());
 	_meshDedos.Draw(GL_TRIANGLES);
-	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() *_geometriaPalma.GetModelMatrix()  * _geometriaMedio.GetModelMatrix() * _geometriaMedioArriba.GetModelMatrix());
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() *_geometriaPalma.GetModelMatrix() *  _geometriaInvisibleMedio.GetModelMatrix() * _geometriaMedio.GetModelMatrix() *  _geometriaInvisibleMedioArriba.GetModelMatrix() * _geometriaMedioArriba.GetModelMatrix());
 	_meshDedos.Draw(GL_TRIANGLES);
 	/* SOMBRA MENIQUE */
-	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() *_geometriaPalma.GetModelMatrix() * _geometriaMenique.GetModelMatrix());
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() *_geometriaPalma.GetModelMatrix() * _geometriaInvisibleMenique.GetModelMatrix() *_geometriaMenique.GetModelMatrix());
 	_meshDedos.Draw(GL_TRIANGLES);
-	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() *_geometriaPalma.GetModelMatrix() * _geometriaMenique.GetModelMatrix() * _geometriaMeniqueArriba.GetModelMatrix());
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() *_geometriaPalma.GetModelMatrix() * _geometriaInvisibleMenique.GetModelMatrix() * _geometriaMenique.GetModelMatrix() *  _geometriaInvisibleMeniqueArriba.GetModelMatrix() * _geometriaMeniqueArriba.GetModelMatrix());
 	_meshDedos.Draw(GL_TRIANGLES);
 	/*SOMBRA PULGAR*/
-	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() *_geometriaPalma.GetModelMatrix() * _geometriaPulgar.GetModelMatrix());
-	_meshPulgar.Draw(GL_TRIANGLES);
-	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection()*_geometriaPalma.GetModelMatrix() * _geometriaPulgar.GetModelMatrix() * _geometriaPulgarArriba.GetModelMatrix());
-	_meshPulgar.Draw(GL_TRIANGLES);
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() *_geometriaPalma.GetModelMatrix() * _geometriaInvisiblePulgar.GetModelMatrix() * _geometriaPulgar.GetModelMatrix());
+	_meshDedos.Draw(GL_TRIANGLES);
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection()* _geometriaPalma.GetModelMatrix() * _geometriaInvisiblePulgar.GetModelMatrix() * _geometriaPulgar.GetModelMatrix() * _geometriaInvisiblePulgarArriba.GetModelMatrix() * _geometriaPulgarArriba.GetModelMatrix());
+	_meshDedos.Draw(GL_TRIANGLES);
 	/* SOMBRA PISO*/
 	_shaderDepth.SetUniformMatrix("mvpMatrix", _camaraLuz.GetViewProjection() * _geometriaPiso.GetModelMatrix());
-	_mesh.Draw(GL_TRIANGLES);
+	_meshPiso.Draw(GL_TRIANGLES);
 	_shaderDepth.Deactivate();
 
 	_depthbuffer.Unbind();
@@ -368,7 +493,7 @@ void GameLoop() {
 	_shaderPuerco.Activate();
 	_shaderPuerco.SetUniformMatrix("modelMatrix", _geometriaIndice.GetModelMatrix());
 	_shaderPuerco.SetUniformMatrix("LightVPMatrix", _camaraLuz.GetViewProjection());
-	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaIndice.GetModelMatrix() );
+	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaInvisibleIndice.GetModelMatrix() * _geometriaIndice.GetModelMatrix() );
 	_shaderPuerco.SetUniformVector("CamaraPosition", _camara.GetPosition());
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Bind();
@@ -376,7 +501,7 @@ void GameLoop() {
 	myTexture3.Bind();
 	glActiveTexture(GL_TEXTURE2);
 	_depthbuffer.BindDepthMap();
-	_mesh.Draw(GL_TRIANGLES);
+	_meshDedos.Draw(GL_TRIANGLES);
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Unbind();
 	glActiveTexture(GL_TEXTURE1);
@@ -385,11 +510,10 @@ void GameLoop() {
 	_depthbuffer.UnbindDepthMap();
 	_shaderPuerco.Deactivate();
 
-	
 	_shaderPuerco.Activate();
 	_shaderPuerco.SetUniformMatrix("modelMatrix", _geometriaIndiceArriba.GetModelMatrix());
 	_shaderPuerco.SetUniformMatrix("LightVPMatrix", _camaraLuz.GetViewProjection());
-	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaPalma.GetModelMatrix()  * _geometriaIndice.GetModelMatrix() * _geometriaIndiceArriba.GetModelMatrix());
+	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaInvisibleIndice.GetModelMatrix() * _geometriaIndice.GetModelMatrix() * _geometriaInvisibleIndiceArriba.GetModelMatrix() * _geometriaIndiceArriba.GetModelMatrix());
 	_shaderPuerco.SetUniformVector("CamaraPosition", _camara.GetPosition());
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Bind();
@@ -397,7 +521,7 @@ void GameLoop() {
 	myTexture3.Bind();
 	glActiveTexture(GL_TEXTURE2);
 	_depthbuffer.BindDepthMap();
-	_mesh.Draw(GL_TRIANGLES);
+	_meshDedos.Draw(GL_TRIANGLES);
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Unbind();
 	glActiveTexture(GL_TEXTURE1);
@@ -410,7 +534,7 @@ void GameLoop() {
 	_shaderPuerco.Activate();
 	_shaderPuerco.SetUniformMatrix("modelMatrix", _geometriaMedio.GetModelMatrix());
 	_shaderPuerco.SetUniformMatrix("LightVPMatrix", _camaraLuz.GetViewProjection());
-	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaMedio.GetModelMatrix() );
+	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaInvisibleMedio.GetModelMatrix() * _geometriaMedio.GetModelMatrix() );
 	_shaderPuerco.SetUniformVector("CamaraPosition", _camara.GetPosition());
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Bind();
@@ -430,7 +554,7 @@ void GameLoop() {
 	_shaderPuerco.Activate();
 	_shaderPuerco.SetUniformMatrix("modelMatrix", _geometriaMedioArriba.GetModelMatrix());
 	_shaderPuerco.SetUniformMatrix("LightVPMatrix", _camaraLuz.GetViewProjection());
-	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaMedio.GetModelMatrix() * _geometriaMedioArriba.GetModelMatrix());
+	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaPalma.GetModelMatrix() *  _geometriaInvisibleMedio.GetModelMatrix() * _geometriaMedio.GetModelMatrix() *  _geometriaInvisibleMedioArriba.GetModelMatrix()  * _geometriaMedioArriba.GetModelMatrix());
 	_shaderPuerco.SetUniformVector("CamaraPosition", _camara.GetPosition());
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Bind();
@@ -451,7 +575,7 @@ void GameLoop() {
 	_shaderPuerco.Activate();
 	_shaderPuerco.SetUniformMatrix("modelMatrix", _geometriaMenique.GetModelMatrix());
 	_shaderPuerco.SetUniformMatrix("LightVPMatrix", _camaraLuz.GetViewProjection());
-	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaMenique.GetModelMatrix());
+	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() * _geometriaPalma.GetModelMatrix() * _geometriaInvisibleMenique.GetModelMatrix() * _geometriaMenique.GetModelMatrix());
 	_shaderPuerco.SetUniformVector("CamaraPosition", _camara.GetPosition());
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Bind();
@@ -471,7 +595,7 @@ void GameLoop() {
 	_shaderPuerco.Activate();
 	_shaderPuerco.SetUniformMatrix("modelMatrix", _geometriaMeniqueArriba.GetModelMatrix());
 	_shaderPuerco.SetUniformMatrix("LightVPMatrix", _camaraLuz.GetViewProjection());
-	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection()  * _geometriaPalma.GetModelMatrix() * _geometriaMenique.GetModelMatrix() * _geometriaMeniqueArriba.GetModelMatrix());
+	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection()  * _geometriaPalma.GetModelMatrix() * _geometriaInvisibleMenique.GetModelMatrix() * _geometriaMenique.GetModelMatrix() *  _geometriaInvisibleMeniqueArriba.GetModelMatrix()  * _geometriaMeniqueArriba.GetModelMatrix());
 	_shaderPuerco.SetUniformVector("CamaraPosition", _camara.GetPosition());
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Bind();
@@ -489,11 +613,10 @@ void GameLoop() {
 	_shaderPuerco.Deactivate();
 
 	/* DIBUJANDO DEDO PULGAR */
-
 	_shaderPuerco.Activate();
 	_shaderPuerco.SetUniformMatrix("modelMatrix", _geometriaPulgar.GetModelMatrix());
 	_shaderPuerco.SetUniformMatrix("LightVPMatrix", _camaraLuz.GetViewProjection());
-	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() *_geometriaPalma.GetModelMatrix() * _geometriaPulgar.GetModelMatrix());
+	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() *_geometriaPalma.GetModelMatrix() * _geometriaInvisiblePulgar.GetModelMatrix() * _geometriaPulgar.GetModelMatrix());
 	_shaderPuerco.SetUniformVector("CamaraPosition", _camara.GetPosition());
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Bind();
@@ -513,7 +636,7 @@ void GameLoop() {
 	_shaderPuerco.Activate();
 	_shaderPuerco.SetUniformMatrix("modelMatrix", _geometriaPulgarArriba.GetModelMatrix());
 	_shaderPuerco.SetUniformMatrix("LightVPMatrix", _camaraLuz.GetViewProjection());
-	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() *_geometriaPalma.GetModelMatrix() * _geometriaPulgar.GetModelMatrix() * _geometriaPulgarArriba.GetModelMatrix());
+	_shaderPuerco.SetUniformMatrix("mvpMatrix", _camara.GetViewProjection() *_geometriaPalma.GetModelMatrix() * _geometriaInvisiblePulgar.GetModelMatrix() * _geometriaPulgar.GetModelMatrix() * _geometriaInvisiblePulgarArriba.GetModelMatrix() * _geometriaPulgarArriba.GetModelMatrix());
 	_shaderPuerco.SetUniformVector("CamaraPosition", _camara.GetPosition());
 	glActiveTexture(GL_TEXTURE0);
 	myTexture.Bind();
@@ -538,13 +661,11 @@ void GameLoop() {
 	_shaderProgram.SetUniformVector("CamaraPosition", _camara.GetPosition());
 	glActiveTexture(GL_TEXTURE0);
 	myTexture2.Bind();
-	//_depthbuffer.BindDepthMap();
 	glActiveTexture(GL_TEXTURE1);
 	_depthbuffer.BindDepthMap();
-	_mesh.Draw(GL_TRIANGLES);
+	_meshPiso.Draw(GL_TRIANGLES);
 	glActiveTexture(GL_TEXTURE0);
 	myTexture2.Unbind();
-	//_depthbuffer.UnbindDepthMap();
 	glActiveTexture(GL_TEXTURE1);
 	_depthbuffer.UnbindDepthMap();
 	_shaderProgram.Deactivate();
